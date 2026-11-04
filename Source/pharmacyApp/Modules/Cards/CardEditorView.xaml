@@ -1,0 +1,43 @@
+<UserControl x:Class="pharmacyApp.Modules.Cards.CardEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F2F3F4"
+             Loaded="OnLoaded"
+             Unloaded="OnUnloaded">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" BorderBrush="#C8CDD2" BorderThickness="1"
+                CornerRadius="0" Padding="18">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          HorizontalContentAlignment="Stretch">
+                <ContentControl x:Name="FormContentHost"
+                                HorizontalContentAlignment="Stretch"/>
+            </ScrollViewer>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="StatusText" VerticalAlignment="Center" Foreground="#4E5B66"
+                       TextWrapping="Wrap" Margin="2,0,16,0"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBlock x:Name="EditNoticeText" VerticalAlignment="Center" Foreground="#B54708"
+                           FontWeight="SemiBold" Margin="0,0,12,0" Visibility="Collapsed"
+                           Text="Click Edit to make changes."/>
+                <Button x:Name="DeleteButton" Height="36" MinWidth="135" Margin="0,0,8,0"
+                        Padding="14,4" Background="#B42318" Foreground="White" BorderBrush="#B42318"
+                        FontWeight="SemiBold" Visibility="Collapsed" Click="OnDeleteClicked"/>
+                <Button x:Name="SaveButton" Content="Save" Height="36" MinWidth="105"
+                        Padding="14,4" Background="#53646F" Foreground="White" BorderBrush="#53646F"
+                        FontWeight="SemiBold" Click="OnSaveClicked"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,311 @@
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:settings="clr-namespace:pharmacyApp.Modules.Settings" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="pharmacyApp.Modules.Settings.DatabaseSettingsView" Loaded="OnLoaded" Background="White">
+    <UserControl.Resources>
+        <Style TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderBrush" Value="#BFCBD2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="White" />
+        </Style>
+        <Style TargetType="PasswordBox" BasedOn="{StaticResource SquarePasswordBoxStyle}">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderBrush" Value="#BFCBD2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="White" />
+        </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource SquareComboBoxStyle}">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="8,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderBrush" Value="#BFCBD2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="White" />
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#40515C" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+        <Style x:Key="SettingsFrame" TargetType="Border">
+            <Setter Property="Padding" Value="18" />
+            <Setter Property="Margin" Value="8" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#C8CDD2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <Style x:Key="SwitchToggle" TargetType="ToggleButton" BasedOn="{StaticResource SquareToggleButtonStyle}">
+            <Setter Property="Width" Value="22" />
+            <Setter Property="Height" Value="22" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid>
+                            <Border x:Name="Track" Background="White" BorderBrush="#ABB3BA" BorderThickness="1" />
+                            <Path x:Name="Check" Data="M 4,10 L 8,14 L 17,5" Stroke="White" StrokeThickness="2" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Track" Property="Background" Value="#315A73" />
+                                <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                <Setter TargetName="Track" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Track" Property="Opacity" Value="0.55" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Settings" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" />
+        <TabControl Grid.Row="1" Name="SettingsTabs" Padding="0">
+            <TabItem Header="General" Padding="12,8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <settings:SettingsPanel>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock Text="Shortcuts" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" />
+                                <CheckBox x:Name="ShortcutsEnabledCheckBox" Content="Enable keyboard shortcuts" VerticalContentAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock Text="Display" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" />
+                                <TextBlock Text="Display resolution" Style="{StaticResource FieldLabel}" />
+                                <ComboBox x:Name="ResolutionBox" IsEditable="True" IsTextSearchEnabled="False" Margin="0,0,0,14" />
+                                <CheckBox x:Name="StartFullscreenCheckBox" Content="Start Fullscreen" VerticalContentAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock Text="Session" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" />
+                                <TextBlock Text="Automatic admin session" Style="{StaticResource FieldLabel}" />
+                                <ComboBox x:Name="IgnoredUserBox" DisplayMemberPath="DisplayName" IsEnabled="False" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock Text="Pharmacy Information" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" />
+                                <TextBlock Text="Pharmacy Name" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="PharmacyNameBox" MaxLength="160" Margin="0,0,0,14" />
+                                <TextBlock Text="Pharmacist name" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="PharmacistNameBox" MaxLength="120" Margin="0,0,0,14" ToolTip="The assistant may address this person as Pharmacist {Name}." />
+                                <TextBlock Text="Username" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="AiUserDisplayNameBox" MaxLength="120" ToolTip="Leave blank to use the signed-in user's display name." />
+                            </StackPanel>
+                        </Border>
+                    </settings:SettingsPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Assistant" Padding="12,8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <settings:SettingsPanel>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,18,0">
+                                        <TextBlock Text="AI Assistant" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" />
+                                        <TextBlock Text="Debug Mode" Foreground="{StaticResource Ink}" />
+                                    </StackPanel>
+                                    <ToggleButton x:Name="AiDebugModeToggle" Grid.Column="1" Style="{StaticResource SwitchToggle}" IsChecked="False" ToolTip="Enable or disable AI assistant Debug mode" />
+                                </Grid>
+                                <Grid Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,18,0">
+                                        <TextBlock Text="Show Debug Workflow Queue" FontWeight="SemiBold" Foreground="{StaticResource Ink}" />
+                                    </StackPanel>
+                                    <ToggleButton x:Name="AiDebugWorkflowQueueToggle" Grid.Column="1" Style="{StaticResource SwitchToggle}" IsChecked="False" ToolTip="Show or hide the workflow queue in messages" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </settings:SettingsPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Local Prescriptions" Padding="12,8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <settings:SettingsPanel>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" x:Name="MedulaSettingsTitle" TextWrapping="Wrap">
+                                    <Run Text="Medula Settings" />
+                                    <Run Text=" (Government service cannot connect in this version)" Foreground="Red" FontSize="12" FontWeight="Normal" />
+                                </TextBlock>
+                                <CheckBox x:Name="MedulaDebugCheckBox" Content="Medula Debug" VerticalContentAlignment="Center" />
+                                <CheckBox x:Name="MedulaBrowserDebugCheckBox" Content="Medula Browser Debug" VerticalContentAlignment="Center" IsEnabled="False" />
+                                <CheckBox x:Name="OfflinePrescriptionListCheckBox" Content="Offline Prescription List" VerticalContentAlignment="Center" IsEnabled="False" IsChecked="True" />
+                                <CheckBox x:Name="SkipElectronicPrescriptionViewCheckBox" Content="Skip E-Prescription Screen" VerticalContentAlignment="Center" IsEnabled="False" />
+                                <CheckBox x:Name="SkipPrescriptionSaveConfirmationCheckBox" Content="Skip Prescription Save Confirmation" VerticalContentAlignment="Center" IsEnabled="False" />
+                                <TextBlock Text="Notification display time (seconds)" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="NotificationDisplaySecondsBox" Width="110" HorizontalAlignment="Left" ToolTip="Notifications can remain visible for 1 to 120 seconds." />
+                                <TextBlock Text="Loyal-patient prescription frequency (monthly)" Style="{StaticResource FieldLabel}" Margin="0,14,0,0" />
+                                <TextBox x:Name="LoyalPatientMonthlyFrequencyBox" Width="110" HorizontalAlignment="Left" ToolTip="1 = at least one prescription per month; 0.5 = at least one every two months." />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock Text="Medula Screen Behavior" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" />
+                                <CheckBox x:Name="HideUnimportantReportDetailsCheckBox" Content="Collapse Secondary Report Details" IsChecked="True" VerticalContentAlignment="Center" />
+                                <CheckBox x:Name="HideUnimportantPrescriptionDetailsCheckBox" Content="Collapse Secondary Prescription Details" IsChecked="True" VerticalContentAlignment="Center" />
+                                <CheckBox x:Name="AutomaticPrescriptionRecipientSelfCheckBox" Content="Default recipient relationship to Self" IsChecked="True" VerticalContentAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </settings:SettingsPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Integrations" Padding="12,8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <settings:SettingsPanel>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" x:Name="ItsSettingsTitle" TextWrapping="Wrap">
+                                    <Run Text="ITS Settings" />
+                                    <Run Text=" (ITS Disabled due to MIT version)" Foreground="Red" FontSize="12" FontWeight="Normal" />
+                                </TextBlock>
+                                <TextBlock Text="Pharmacy GLN Code" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="ItsPharmacyGlnBox" MaxLength="13" ToolTip="The 13-digit GLN of the pharmacy sending ITS notifications." />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" x:Name="EczaciKartSettingsTitle" TextWrapping="Wrap">
+                                    <Run Text="Eczacı Kart" />
+                                    <Run Text=" (Private Company the API Wrapper I made cannot connect in this version)" Foreground="Red" FontSize="12" FontWeight="Normal" />
+                                </TextBlock>
+                                <CheckBox x:Name="EczaciKartBrowserDebugCheckBox" Content="Eczaci Kart Browser Debug" VerticalContentAlignment="Center" IsEnabled="False" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" x:Name="SelcukSettingsTitle" TextWrapping="Wrap">
+                                    <Run Text="Selcuk Warehouse (Depot)" />
+                                    <Run Text=" (Medication Warehouse WebService API Wrapper I made cannot connect in this version)" Foreground="Red" FontSize="12" FontWeight="Normal" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" x:Name="BekSettingsTitle" TextWrapping="Wrap">
+                                    <Run Text="Bursa Pharmacy Cooperative (BEK)" />
+                                    <Run Text=" (Medication Warehouse WebService API Wrapper I made cannot connect in this version)" Foreground="Red" FontSize="12" FontWeight="Normal" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" x:Name="IskoopSettingsTitle" TextWrapping="Wrap">
+                                    <Run Text="Istanbul Pharmacy Cooperative (ISKOOP)" />
+                                    <Run Text=" (Medication Warehouse WebService API Wrapper I made cannot connect in this version)" Foreground="Red" FontSize="12" FontWeight="Normal" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" x:Name="AllianceSettingsTitle" TextWrapping="Wrap">
+                                    <Run Text="Alliance Healthcare / Cencora / Hedef" />
+                                    <Run Text=" (Medication Warehouse WebService API Wrapper I made cannot connect in this version)" Foreground="Red" FontSize="12" FontWeight="Normal" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </settings:SettingsPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Data" Padding="12,8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <settings:SettingsPanel>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock Text="Product Analysis" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" />
+                                <TextBlock Text="Default stock duration for all medicines (months)" Style="{StaticResource FieldLabel}" />
+                                <DockPanel Margin="0,0,0,18" LastChildFill="False">
+                                    <TextBox x:Name="AnalysisDefaultMonthsBox" Width="105" Height="32" Margin="0,0,9,0" VerticalContentAlignment="Center" ToolTip="Enter a multiple of 0.5 between 0.5 and 60." />
+                                    <Button Content="Apply to All Medicines" Height="32" Padding="13,0" Background="{StaticResource Accent}" Foreground="White" BorderThickness="0" Click="OnApplyAnalysisDefaultToAllClicked" />
+                                </DockPanel>
+                                <Separator Margin="0,0,0,16" />
+                                <TextBlock Text="Medicine-specific stock duration" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,8" />
+                                <Grid Margin="0,0,0,9">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="AnalysisProductSearchBox" Height="32" Padding="8,4" ToolTip="Search by medicine name or barcode." KeyDown="OnAnalysisProductSearchKeyDown" />
+                                    <Button Grid.Column="1" Content="Search" Width="68" Height="32" Margin="8,0,0,0" Click="OnAnalysisProductSearchClicked" />
+                                </Grid>
+                                <ComboBox x:Name="AnalysisProductBox" Height="34" Margin="0,0,0,9" DisplayMemberPath="SelectionDisplay" SelectionChanged="OnAnalysisProductSelectionChanged" />
+                                <DockPanel Margin="0,0,0,14" LastChildFill="False">
+                                    <TextBox x:Name="AnalysisProductMonthsBox" Width="105" Height="32" Margin="0,0,9,0" VerticalContentAlignment="Center" ToolTip="Enter a value between 0.5 and 60 months for this medicine." />
+                                    <Button Content="Save Override" Height="32" Padding="13,0" Margin="0,0,8,0" Background="{StaticResource Accent}" Foreground="White" BorderThickness="0" Click="OnSaveAnalysisOverrideClicked" />
+                                    <Button Content="Remove Override" Height="32" Padding="13,0" Click="OnRemoveAnalysisOverrideClicked" />
+                                </DockPanel>
+                                <TextBlock Text="Medicines with Overrides" Style="{StaticResource FieldLabel}" />
+                                <DataGrid x:Name="AnalysisOverridesGrid" Height="190" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column" SelectionMode="Single" SelectionChanged="OnAnalysisOverrideGridSelectionChanged">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Medicine" Binding="{Binding DisplayName}" Width="*" MinWidth="220" />
+                                        <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="135" />
+                                        <DataGridTextColumn Header="Stock Duration" Binding="{Binding WantedStockMonthsDisplay}" Width="95" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource SettingsFrame}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,12" x:Name="DatabaseSettingsTitle" TextWrapping="Wrap">
+                                    <Run Text="Database Settings" />
+                                    <Run Text=" (DO NOT CHANGE, CHANGING WAS LEFT ENABLED JUST IN CASE)" Foreground="Red" FontSize="12" FontWeight="Normal" />
+                                </TextBlock>
+                                <TextBlock Text="Server name" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="HostnameBox" Margin="0,0,0,14" />
+                                <TextBlock Text="Port" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="PortBox" Margin="0,0,0,14" />
+                                <TextBlock Text="Database name" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="DatabaseNameBox" Margin="0,0,0,14" />
+                                <TextBlock Text="Username" Style="{StaticResource FieldLabel}" />
+                                <TextBox x:Name="UsernameBox" Margin="0,0,0,14" />
+                                <TextBlock Text="Password" Style="{StaticResource FieldLabel}" />
+                                <PasswordBox x:Name="PasswordEntry" Margin="0,0,0,5" />
+                                <WrapPanel Margin="0,18,0,0" VerticalAlignment="Center">
+                                    <Button x:Name="ToggleTableNamesButton" Content="Change Tables" Width="150" Height="34" HorizontalAlignment="Left" Margin="0" Click="OnToggleTableNamesClicked" />
+                                    <TextBlock Text="(debug feature)" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="Gray" FontSize="12" />
+                                </WrapPanel>
+                                <Border x:Name="TableNamesPanel" Visibility="Collapsed" Margin="0,12,0,0" Padding="12" BorderBrush="#C8CDD2" BorderThickness="1" CornerRadius="0" Background="White">
+                                    <StackPanel>
+                                        <TextBlock Text="Table Names" FontWeight="SemiBold" Foreground="{StaticResource Ink}" />
+                                        <StackPanel x:Name="TableNameRowsPanel" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </settings:SettingsPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+        <DockPanel LastChildFill="True" Margin="8,12,8,0" Grid.Row="2">
+            <Button Content="Save" Width="112" Height="38" DockPanel.Dock="Right" Background="{StaticResource Accent}" Foreground="White" BorderThickness="0" FontWeight="SemiBold" Click="SaveClick" />
+            <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="0,0,16,0" Foreground="#237A57" TextWrapping="Wrap" Visibility="Collapsed" />
+        </DockPanel>
+    </Grid>
+</UserControl>

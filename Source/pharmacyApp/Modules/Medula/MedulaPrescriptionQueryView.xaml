@@ -1,0 +1,169 @@
+<UserControl x:Class="pharmacyApp.Modules.Medula.MedulaPrescriptionQueryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F2F3F4" Loaded="OnLoaded" Unloaded="OnUnloaded">
+    <UserControl.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#62727C"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style x:Key="EntryBox" TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="9,5"/>
+            <Setter Property="BorderBrush" Value="#BCCBD1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="MinWidth" Value="92"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="Background" Value="#294C62"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#294C62"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style x:Key="RefreshButton" TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="9,0,0,0"/>
+            <Setter Property="Background" Value="#294C62"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#294C62"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style TargetType="DataGrid" BasedOn="{StaticResource MedulaDataGridStyle}">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D6E0E4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#E8ECEF"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="CanUserReorderColumns" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="RowHeight" Value="39"/>
+            <Setter Property="ColumnHeaderHeight" Value="39"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
+        </Style>
+        <Style TargetType="DataGridRow" BasedOn="{StaticResource MedulaDataGridRowStyle}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="DataGridCell" BasedOn="{StaticResource MedulaDataGridCellStyle}">
+            <Setter Property="Padding" Value="11,0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MedulaDataGridColumnHeaderStyle}"/>
+    </UserControl.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#D8E9ED" BorderBrush="#C5D9DE" BorderThickness="1"
+                CornerRadius="0" Height="42" Padding="14,0">
+            <DockPanel LastChildFill="True">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Padding="10,5" CornerRadius="0" Background="#EDF7F5">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="#D28B2C" Margin="0,0,7,0"/>
+                            <TextBlock x:Name="ConnectionText" Text="Preparing" Foreground="#31544F"
+                                       FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <Button Style="{StaticResource RefreshButton}" ToolTip="Refresh prescription query"
+                            Click="OnRefreshClick">
+                        <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="15"/>
+                    </Button>
+                </StackPanel>
+                <TextBlock Text="Prescription Query" FontSize="16" FontWeight="SemiBold"
+                           Foreground="#294854" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" BorderBrush="#D6E0E4"
+                BorderThickness="1,0,1,1" Padding="16,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" Margin="0,0,20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Prescription No." Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="PrescriptionNumberBox" Style="{StaticResource EntryBox}"
+                                 CharacterCasing="Upper" MaxLength="32"
+                                 PreviewKeyDown="OnPrescriptionNumberKeyDown"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="Query" Style="{StaticResource PrimaryButton}"
+                            VerticalAlignment="Bottom" Click="OnPrescriptionNumberSearchClick"/>
+                </Grid>
+                <Border Grid.Column="1" Width="1" Background="#E0E6E9"/>
+                <Grid Grid.Column="2" Margin="20,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="National ID No." Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="PatientIdentityBox" Style="{StaticResource EntryBox}"
+                                 MaxLength="11" PreviewTextInput="OnPatientIdentityPreviewTextInput"
+                                 PreviewKeyDown="OnPatientIdentityKeyDown"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="Query" Style="{StaticResource PrimaryButton}"
+                            VerticalAlignment="Bottom" Click="OnPatientSearchClick"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border x:Name="MessagePanel" Grid.Row="2" Visibility="Collapsed" Margin="0,10,0,0"
+                Background="#FFF2F1" BorderBrush="#E8B8B4" BorderThickness="1"
+                CornerRadius="0" Padding="12,8">
+            <DockPanel>
+                <TextBlock x:Name="MessageIcon" Text="" FontFamily="Segoe MDL2 Assets"
+                           Foreground="#B34840" Margin="0,0,8,0"/>
+                <TextBlock x:Name="MessageText" Foreground="#9A3E37" TextWrapping="Wrap"/>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="3" Margin="0,10,0,0" Background="White"
+                BorderBrush="#D6E0E4" BorderThickness="1" CornerRadius="0">
+            <Grid>
+                <DataGrid x:Name="ResultGrid" ItemsSource="{Binding Prescriptions}"
+                          MouseDoubleClick="OnResultGridDoubleClick">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Prescription No." Binding="{Binding PrescriptionNumber}" Width="1.1*"/>
+                        <DataGridTextColumn Header="Prescription Date" Binding="{Binding PrescriptionDate}" Width="1*"/>
+                        <DataGridTextColumn Header="Last Operation Date" Binding="{Binding LastTransactionDate}" Width="1*"/>
+                        <DataGridTextColumn Header="Patient" Binding="{Binding PatientName}" Width="1.7*"/>
+                        <DataGridTextColumn Header="Coverage" Binding="{Binding CoverageDisplay}" Width="1.1*"/>
+                        <DataGridTextColumn Header="QR Code Status" Binding="{Binding QrCodeStatusDisplay}" Width="1.2*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="28"
+                               Foreground="#91A2AA" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Prescriptions queried by national ID will appear here."
+                               Margin="0,10,0,0" Foreground="#71828B"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

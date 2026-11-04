@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>pharmacyApp</RootNamespace>
+    <AssemblyName>pharmacyApp</AssemblyName>
+    <StartupObject>pharmacyApp.Program</StartupObject>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\English.json" LogicalName="pharmacyApp.Localization.English.json" />
+    <PackageReference Include="Markdig" Version="1.5.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4078.44" />
+    <PackageReference Include="Npgsql" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Launcher\StartupFailureDialog.cs" Link="Infrastructure\StartupFailureDialog.cs" />
+    <Compile Include="..\invoiceXmlImporter\CompactInvoiceRepository.cs" Link="Modules\Invoices\CompactInvoiceRepository.cs" />
+    <Compile Include="..\invoiceXmlImporter\UblInvoiceParser.cs" Link="Modules\Invoices\UblInvoiceParser.cs" />
+    <EmbeddedResource Include="..\database\051_create_invoice_stock_tracking.sql" LogicalName="pharmacyApp.Database.051_create_invoice_stock_tracking.sql" />
+    <EmbeddedResource Include="..\database\052_compact_invoice_stock_logs.sql" LogicalName="pharmacyApp.Database.052_compact_invoice_stock_logs.sql" />
+    <EmbeddedResource Include="..\database\054_normalize_invoice_stock_actions.sql" LogicalName="pharmacyApp.Database.054_normalize_invoice_stock_actions.sql" />
+    <EmbeddedResource Include="..\database\055_add_partial_invoice_refunds.sql" LogicalName="pharmacyApp.Database.055_add_partial_invoice_refunds.sql" />
+    <EmbeddedResource Include="..\database\057_create_manual_stock_and_unnotified_its.sql" LogicalName="pharmacyApp.Database.057_create_manual_stock_and_unnotified_its.sql" />
+    <EmbeddedResource Include="..\database\064_create_barcode_analysis.sql" LogicalName="pharmacyApp.Database.064_create_barcode_analysis.sql" />
+    <EmbeddedResource Include="..\database\065_normalize_prescription_codes.sql" LogicalName="pharmacyApp.Database.065_normalize_prescription_codes.sql" />
+    <EmbeddedResource Include="..\database\067_create_loyal_patient_data.sql" LogicalName="pharmacyApp.Database.067_create_loyal_patient_data.sql" />
+    <EmbeddedResource Include="..\database\068_create_loyal_patient_report_sampling.sql" LogicalName="pharmacyApp.Database.068_create_loyal_patient_report_sampling.sql" />
+    <EmbeddedResource Include="..\database\069_create_loyal_patient_hybrid_scoring.sql" LogicalName="pharmacyApp.Database.069_create_loyal_patient_hybrid_scoring.sql" />
+    <EmbeddedResource Include="..\database\070_create_loyal_patient_benchmark_cohort.sql" LogicalName="pharmacyApp.Database.070_create_loyal_patient_benchmark_cohort.sql" />
+    <EmbeddedResource Include="..\database\071_add_patient_prescription_count.sql" LogicalName="pharmacyApp.Database.071_add_patient_prescription_count.sql" />
+    <EmbeddedResource Include="..\database\072_clean_patient_phone_numbers.sql" LogicalName="pharmacyApp.Database.072_clean_patient_phone_numbers.sql" />
+    <EmbeddedResource Include="..\database\073_add_loyal_patient_strikes.sql" LogicalName="pharmacyApp.Database.073_add_loyal_patient_strikes.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="permittedSolution.py" CopyToPublishDirectory="Never" />
+    <None Update="AI\Prompts\*.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="AI\Evaluation\*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+  <Target Name="PublishStartupLauncher" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <PropertyGroup>
+      <WindowsCSharpCompiler>$(WINDIR)\Microsoft.NET\Framework64\v4.0.30319\csc.exe</WindowsCSharpCompiler>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(WindowsCSharpCompiler)')" Text="The Windows .NET Framework compiler is required to publish the startup launcher." />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).exe" DestinationFiles="$(PublishDir)pharmacyApp.Core.exe" />
+    <Exec Command="&quot;$(WindowsCSharpCompiler)&quot; /nologo /target:winexe /platform:x64 /optimize+ /out:&quot;$(PublishDir)pharmacyApp.exe&quot; &quot;$(MSBuildProjectDirectory)\..\Launcher\Launcher.cs&quot; &quot;$(MSBuildProjectDirectory)\..\Launcher\StartupFailureDialog.cs&quot;" />
+  </Target>
+</Project>

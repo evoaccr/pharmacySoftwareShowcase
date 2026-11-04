@@ -1,0 +1,41 @@
+<Window x:Class="pharmacyApp.Modules.Login.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Entry" Width="470" Height="390" MinWidth="430" MinHeight="360"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="{StaticResource Canvas}">
+    <Window.Resources>
+        <Style x:Key="LoginComboField" TargetType="ComboBox" BasedOn="{StaticResource SquareComboBoxStyle}">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#BFCBD2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <Style x:Key="LoginPasswordField" TargetType="PasswordBox" BasedOn="{StaticResource SquarePasswordBoxStyle}">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="34">
+        <Border Padding="28" Background="White" BorderBrush="#C8CDD2" BorderThickness="1" CornerRadius="0">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Sign In" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Ink}" Margin="0,0,0,20"/>
+                <TextBlock Text="Username" Margin="0,0,0,6" FontWeight="SemiBold" Foreground="#40515C"/>
+                <ComboBox x:Name="UserBox" Style="{StaticResource LoginComboField}"
+                          DisplayMemberPath="DisplayName" Margin="0,0,0,16"/>
+
+                <TextBlock Text="Password" Margin="0,0,0,6" FontWeight="SemiBold" Foreground="#40515C"/>
+                <PasswordBox x:Name="PasswordEntry" Style="{StaticResource LoginPasswordField}" Margin="0,0,0,16"/>
+
+                <TextBlock x:Name="StatusText" MinHeight="18" Margin="0,0,0,12"
+                           Foreground="#B43434" TextWrapping="Wrap"/>
+                <Button x:Name="LoginButton" Content="Sign In" Height="40" IsDefault="True"
+                        Background="{StaticResource Accent}" Foreground="White" BorderThickness="0"
+                        FontWeight="SemiBold" Click="LoginClick"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../pharmacyApp/Modules/Products/ProductDetailModels.cs" Link="ProductDetailModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Products/ProductAnalysisModels.cs" Link="ProductAnalysisModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Sales/RetailSaleModels.cs" Link="RetailSaleModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Sales/RetailRefundModels.cs" Link="RetailRefundModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Sales/RetailSalesListModels.cs" Link="RetailSalesListModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaPageClassifier.cs" Link="MedulaPageClassifier.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaBrowserWarning.cs" Link="MedulaBrowserWarning.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaWarningBridge.cs" Link="MedulaWarningBridge.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaDoctorReconciliation.cs" Link="MedulaDoctorReconciliation.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaDirectorySql.cs" Link="MedulaDirectorySql.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaPrescriptionListRefreshPolicy.cs" Link="MedulaPrescriptionListRefreshPolicy.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaPrescriptionModels.cs" Link="MedulaPrescriptionModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaElectronicPrescriptionModels.cs" Link="MedulaElectronicPrescriptionModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaPrescriptionCodebook.cs" Link="MedulaPrescriptionCodebook.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaPrescriptionHeaderParser.cs" Link="MedulaPrescriptionHeaderParser.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaPrescriptionHistoryModels.cs" Link="MedulaPrescriptionHistoryModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaPrescriptionSaleCalculator.cs" Link="MedulaPrescriptionSaleCalculator.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaDatabaseRetryPolicy.cs" Link="MedulaDatabaseRetryPolicy.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaInsuranceTypeResolver.cs" Link="MedulaInsuranceTypeResolver.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaPrescriptionFieldMapper.cs" Link="MedulaPrescriptionFieldMapper.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaDateNormalizer.cs" Link="MedulaDateNormalizer.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaSubScreenSafety.cs" Link="MedulaSubScreenSafety.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaRemoteScreenModels.cs" Link="MedulaRemoteScreenModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaRemoteScreenRefiner.cs" Link="MedulaRemoteScreenRefiner.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaReportIngredientMatching.cs" Link="MedulaReportIngredientMatching.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaReportRowAlignment.cs" Link="MedulaReportRowAlignment.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/LoyalPatientClassifier.cs" Link="LoyalPatientClassifier.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/MedulaLoyalPatientHistoryModels.cs" Link="MedulaLoyalPatientHistoryModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Medula/LoyalPatientReportSupplyModels.cs" Link="LoyalPatientReportSupplyModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/EczaciKartInvoiceModels.cs" Link="EczaciKartInvoiceModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/EczaciKartInvoiceDocument.cs" Link="EczaciKartInvoiceDocument.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/InvoiceMedicationClassifier.cs" Link="InvoiceMedicationClassifier.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/InvoiceTraceabilityParser.cs" Link="InvoiceTraceabilityParser.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/InvoiceStockMovementPlanner.cs" Link="InvoiceStockMovementPlanner.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/InvoiceItsNotificationPlanner.cs" Link="InvoiceItsNotificationPlanner.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/InvoiceItsReturnSender.cs" Link="InvoiceItsReturnSender.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/PartialInvoiceRefundModels.cs" Link="PartialInvoiceRefundModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Invoices/LegacyInvoiceMergeMatcher.cs" Link="LegacyInvoiceMergeMatcher.cs" />
+    <Compile Include="../invoiceXmlImporter/UblInvoiceParser.cs" Link="UblInvoiceParser.cs" />
+    <Compile Include="../pharmacyApp/Modules/Its/ItsSaleTestModels.cs" Link="ItsSaleTestModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Its/ItsReferenceDataModels.cs" Link="ItsReferenceDataModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Its/ItsApiClient.cs" Link="ItsApiClient.cs" />
+    <Compile Include="../pharmacyApp/Modules/Its/ItsPtsModels.cs" Link="ItsPtsModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Its/ItsProductStatusQueryModels.cs" Link="ItsProductStatusQueryModels.cs" />
+    <Compile Include="../pharmacyApp/Modules/Its/ItsProductStatusQueryService.cs" Link="ItsProductStatusQueryService.cs" />
+    <Compile Include="../pharmacyApp/Modules/Sales/RetailItsOrchestrationService.cs" Link="RetailItsOrchestrationService.cs" />
+  </ItemGroup>
+</Project>

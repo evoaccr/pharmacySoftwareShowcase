@@ -1,0 +1,947 @@
+<UserControl x:Class="pharmacyApp.Modules.Medula.MedulaPrescriptionEntryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="OnLoaded" Unloaded="OnUnloaded" Background="#F4F7F8">
+    <UserControl.Resources>
+        <Style x:Key="ActionButton" TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="MinWidth" Value="74"/>
+            <Setter Property="Padding" Value="11,0"/>
+            <Setter Property="Margin" Value="0,0,6,6"/>
+            <Setter Property="Background" Value="#E8EFF1"/>
+            <Setter Property="Foreground" Value="#24333D"/>
+            <Setter Property="BorderBrush" Value="#C8D5DA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="PrimaryActionButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
+            <Setter Property="Background" Value="{StaticResource Accent}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#52616C"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style x:Key="EntryBox" TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="BorderBrush" Value="#C9D4D9"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="EntryCombo" TargetType="ComboBox" BasedOn="{StaticResource SquareComboBoxStyle}">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="7,3"/>
+            <Setter Property="BorderBrush" Value="#C9D4D9"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <Style x:Key="EntryDate" TargetType="DatePicker">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="BorderBrush" Value="#C9D4D9"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="SelectedDateFormat" Value="Short"/>
+        </Style>
+        <Style TargetType="DatePickerTextBox">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <EventSetter Event="PreviewTextInput" Handler="OnDateTextBoxPreviewTextInput"/>
+            <EventSetter Event="PreviewKeyDown" Handler="OnDateTextBoxPreviewKeyDown"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePickerTextBox">
+                        <Grid>
+                            <TextBlock x:Name="DateEntryHelper" Text="__/__/__" Foreground="#91A0A8" Visibility="Collapsed"
+                                       Margin="8,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                            <ScrollViewer x:Name="PART_ContentHost" Background="Transparent"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="DateEntryHelper" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter TargetName="DateEntryHelper" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="DateEntryHelper" Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SectionCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D9E2E6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+        <Style x:Key="SectionHeader" TargetType="Border">
+            <Setter Property="Background" Value="#DCEEF5"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="CornerRadius" Value="0"/>
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#263A47"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        <Style x:Key="PatientCard" TargetType="Border">
+            <Setter Property="Background" Value="#F8FAFA"/>
+            <Setter Property="BorderBrush" Value="#CBD8DD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Padding" Value="9"/>
+        </Style>
+        <Style x:Key="DrugErrorIndicator" TargetType="Border">
+            <Setter Property="Width" Value="19"/>
+            <Setter Property="Height" Value="19"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Margin" Value="5,0,0,0"/>
+            <Setter Property="Background" Value="#C62828"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="ToolTipService.InitialShowDelay" Value="0"/>
+            <Setter Property="ToolTipService.BetweenShowDelay" Value="0"/>
+            <Setter Property="ToolTipService.ShowDuration" Value="60000"/>
+            <Setter Property="ToolTip">
+                <Setter.Value>
+                    <ToolTip Placement="Mouse" HorizontalOffset="12" VerticalOffset="10"
+                             Background="Transparent" BorderThickness="0" Padding="0" HasDropShadow="False"
+                             DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                        <Border MaxWidth="560" Padding="14,11" CornerRadius="0"
+                                Background="#FFF7F7" BorderBrush="#C62828" BorderThickness="1.5">
+                            <StackPanel>
+                                <TextBlock Text="Medicine Validation Error" Foreground="#A61F1F"
+                                           FontSize="13" FontWeight="Bold" Margin="0,0,0,6"/>
+                                <TextBlock Text="{Binding ErrorText}" Foreground="#532626"
+                                           FontSize="12" TextWrapping="Wrap" LineHeight="18"/>
+                            </StackPanel>
+                        </Border>
+                    </ToolTip>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ErrorText}" Value="">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DataGridRow" BasedOn="{StaticResource MedulaDataGridRowStyle}"/>
+        <Style TargetType="DataGridCell" BasedOn="{StaticResource MedulaDataGridCellStyle}"/>
+        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MedulaDataGridColumnHeaderStyle}"/>
+    </UserControl.Resources>
+
+    <DockPanel LastChildFill="True">
+        <TextBlock x:Name="LocalPrescriptionNotice" DockPanel.Dock="Top"
+                   Text="Only local(fake,) prescriptions due to MIT version"
+                   Foreground="Red" FontWeight="SemiBold" TextWrapping="Wrap" Margin="16,8,16,0"/>
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border x:Name="PrescriptionStatusRow" Margin="0,0,0,8" Padding="10,7"
+                Background="#EAF3F6" BorderBrush="#C8DADF" BorderThickness="1" CornerRadius="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="PrescriptionLockToggleButton" Width="32" Height="30" Padding="0"
+                        Visibility="Collapsed" Background="#FFFFFFAA" BorderBrush="#9EB9C2"
+                        ToolTip="Change prescription QR Code status" Click="OnActionClick">
+                    <TextBlock x:Name="PrescriptionLockIcon" Text=""
+                               FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                </Button>
+                <TextBlock x:Name="PrescriptionSummaryText" Grid.Column="2"
+                           Text="Prescription No.: 0  •  QR Code Status: —  •  Invoice Group: —"
+                           Foreground="#0C5E88" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                <StackPanel x:Name="BrowserMessageStack" Grid.Column="4" Orientation="Horizontal"
+                            HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Border Padding="12,7" CornerRadius="0" Background="#E8F5F2">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="#D28B2C" Margin="0,0,7,0"/>
+                            <TextBlock x:Name="ConnectionText" Text="Preparing prescription screen" Foreground="#31544F" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+                    <Button x:Name="MedulaRefreshButton" Width="32" Height="28" Margin="8,0,0,0"
+                            Background="#294C62" Foreground="White" BorderBrush="#294C62"
+                            ToolTip="Refresh Medula prescription screen" AutomationProperties.Name="Refresh"
+                            Click="OnMedulaRefreshClick">
+                        <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="15"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="820"/>
+                <ColumnDefinition x:Name="DebugResponseSpacer" Width="0"/>
+                <ColumnDefinition x:Name="DebugResponseColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer x:Name="PrescriptionScrollViewer" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto"
+                          PreviewMouseWheel="OnPrescriptionMouseWheel">
+                <StackPanel MinWidth="810" Width="{Binding ViewportWidth, ElementName=PrescriptionScrollViewer}">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="10"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                    <Border x:Name="PatientInformationCard" Grid.Column="0" Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <Border Style="{StaticResource SectionHeader}" Padding="12,4" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Patient Information" Style="{StaticResource SectionTitle}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="PatientCompactSummaryText" Grid.Column="1" Margin="14,0,10,0" VerticalAlignment="Center"
+                                               Foreground="#466472" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+                                    <WrapPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <Button Content="Medicine" Tag="PatientDrugs" Style="{StaticResource ActionButton}" Height="28" MinWidth="48" Padding="7,0" Margin="0,0,4,0" FontSize="11" Click="OnActionClick"/>
+                                        <Button Content="Report" Tag="PatientReports" Style="{StaticResource ActionButton}" Height="28" MinWidth="48" Padding="7,0" Margin="0,0,4,0" FontSize="11" Click="OnActionClick"/>
+                                        <Button Content="Examination" Tag="Examinations" Style="{StaticResource ActionButton}" Height="28" MinWidth="58" Padding="7,0" Margin="0,0,4,0" FontSize="11" Click="OnActionClick"/>
+                                        <Button Content="Off-label" Tag="OffLabelCombined" Style="{StaticResource ActionButton}" Height="28" MinWidth="62" Padding="7,0" Margin="0" FontSize="11" Click="OnActionClick"/>
+                                    </WrapPanel>
+                                    <Button x:Name="PatientInformationToggleButton" Grid.Column="3" Content="▼" Width="28" Height="28"
+                                            Margin="7,0,0,0" Padding="0" Background="Transparent" BorderThickness="0"
+                                            ToolTip="Hide patient information" Click="OnPatientInformationToggleClick" Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel x:Name="PatientInformationContent" Margin="12,9,12,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid Grid.Column="0" HorizontalAlignment="Stretch">
+                                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                    <TextBlock Text="Prescription Owner" Style="{StaticResource FieldLabel}"/>
+                                    <Border x:Name="OwnerPatientCard" Grid.Row="1" Style="{StaticResource PatientCard}" HorizontalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch"><Grid.RowDefinitions><RowDefinition Height="68"/><RowDefinition Height="6"/><RowDefinition Height="Auto"/></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="0"/><ColumnDefinition x:Name="OwnerPhotoSpacerColumn" Width="0"/><ColumnDefinition x:Name="OwnerPhotoColumn" Width="0"/></Grid.ColumnDefinitions>
+                                            <Grid Grid.Column="0" HorizontalAlignment="Stretch"><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="4"/><RowDefinition/></Grid.RowDefinitions>
+                                                <Grid HorizontalAlignment="Stretch"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="4"/><ColumnDefinition Width="28"/></Grid.ColumnDefinitions><Grid><TextBox x:Name="PatientIdentityBox" Tag="owner" MaxLength="11" Style="{StaticResource EntryBox}" HorizontalAlignment="Stretch" ToolTip="National ID No." TextChanged="OnPatientLookupTextChanged"/><TextBlock Text="National ID No." Margin="9,0" VerticalAlignment="Center" Foreground="#91A0A8" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=PatientIdentityBox}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></Grid><Button x:Name="OwnerPatientLookupButton" Grid.Column="2" Tag="owner" Width="28" Height="28" Padding="0" Margin="0" Visibility="Collapsed" Style="{StaticResource ActionButton}" ToolTip="Verify patient with Medula and save" Click="OnPatientDirectoryLookupClick"><TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="13"/></Button></Grid>
+                                                <Grid Grid.Row="2" HorizontalAlignment="Stretch"><TextBox x:Name="OwnerPatientNameBox" Tag="owner" Style="{StaticResource EntryBox}" HorizontalAlignment="Stretch" ToolTip="Full name" TextChanged="OnPatientLookupTextChanged"/><TextBlock Text="Full name" Margin="9,0" VerticalAlignment="Center" Foreground="#91A0A8" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=OwnerPatientNameBox}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></Grid>
+                                            </Grid>
+                                            <Border x:Name="OwnerPhotoContainer" Grid.Column="2" Width="48" Height="48" VerticalAlignment="Center" Background="#E8EFF1" CornerRadius="0" ClipToBounds="True" Visibility="Collapsed"><Image x:Name="OwnerPatientPhoto" Stretch="UniformToFill"/></Border>
+                                            <Grid Grid.Row="2" Grid.ColumnSpan="3" Height="32" HorizontalAlignment="Stretch"><Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="0"/><ColumnDefinition Width="*" MinWidth="0"/></Grid.ColumnDefinitions>
+                                                <DockPanel LastChildFill="True" VerticalAlignment="Center"><TextBlock DockPanel.Dock="Left" Text="Coverage:" Style="{StaticResource FieldLabel}" Margin="0" FontSize="13"/><TextBlock x:Name="CoverageValueText" Text="—" FontSize="13" FontWeight="SemiBold" Foreground="#1769AA" TextTrimming="CharacterEllipsis"/></DockPanel>
+                                                <DockPanel Grid.Column="1" LastChildFill="True" VerticalAlignment="Center"><TextBlock DockPanel.Dock="Left" Text="Patient Type:" Style="{StaticResource FieldLabel}" Margin="0" FontSize="13"/><TextBlock x:Name="PatientTypeValueText" Text="Normal" FontSize="13" FontWeight="SemiBold" Foreground="#1769AA" TextTrimming="CharacterEllipsis"/></DockPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                    <Popup x:Name="OwnerSuggestionPopup" Grid.Row="1" Placement="Bottom" PlacementTarget="{Binding ElementName=OwnerPatientCard}" StaysOpen="False" AllowsTransparency="True">
+                                        <Border Width="390" MaxHeight="250" Background="White" BorderBrush="#BFCED4" BorderThickness="1" CornerRadius="0"><ListBox x:Name="OwnerSuggestionList" Tag="owner" DisplayMemberPath="DisplayText" SelectionChanged="OnPatientSuggestionSelected"/></Border>
+                                    </Popup>
+                                </Grid>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Medicine Recipient" Style="{StaticResource FieldLabel}"/>
+                                    <Border x:Name="RecipientPatientCard" Style="{StaticResource PatientCard}">
+                                        <Grid><Grid.RowDefinitions><RowDefinition Height="68"/><RowDefinition Height="6"/><RowDefinition Height="32"/></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition x:Name="RecipientPhotoColumn" Width="0"/><ColumnDefinition x:Name="RecipientPhotoSpacerColumn" Width="0"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                            <Border x:Name="RecipientPhotoContainer" Width="48" Height="48" VerticalAlignment="Center" Background="#E8EFF1" CornerRadius="0" ClipToBounds="True" Visibility="Collapsed"><Image x:Name="RecipientPatientPhoto" Stretch="UniformToFill"/></Border>
+                                            <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="4"/><RowDefinition/></Grid.RowDefinitions>
+                                                <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="4"/><ColumnDefinition Width="28"/></Grid.ColumnDefinitions><Grid><TextBox x:Name="RecipientIdentityBox" Tag="recipient" MaxLength="11" Style="{StaticResource EntryBox}" ToolTip="Recipient National ID" TextChanged="OnPatientLookupTextChanged" GotKeyboardFocus="OnRecipientLookupGotKeyboardFocus"/><TextBlock Text="Recipient National ID" Margin="9,0" VerticalAlignment="Center" Foreground="#91A0A8" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=RecipientIdentityBox}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></Grid><Button x:Name="RecipientPatientLookupButton" Grid.Column="2" Tag="recipient" Width="28" Height="28" Padding="0" Margin="0" Visibility="Collapsed" Style="{StaticResource ActionButton}" ToolTip="Verify recipient with Medula and save" Click="OnPatientDirectoryLookupClick"><TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="13"/></Button></Grid>
+                                                <Grid Grid.Row="2"><TextBox x:Name="RecipientPatientNameBox" Tag="recipient" Style="{StaticResource EntryBox}" ToolTip="Full name" TextChanged="OnPatientLookupTextChanged" GotKeyboardFocus="OnRecipientLookupGotKeyboardFocus"/><TextBlock Text="Full name" Margin="9,0" VerticalAlignment="Center" Foreground="#91A0A8" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=RecipientPatientNameBox}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></Grid>
+                                            </Grid>
+                                            <ComboBox x:Name="RecipientTypeBox" Grid.Row="2" Grid.ColumnSpan="3" Style="{StaticResource EntryCombo}" SelectedValuePath="Tag" SelectedIndex="0" SelectionChanged="OnRecipientTypeChanged"><ComboBoxItem Content="Relationship" Tag="0"/><ComboBoxItem Content="Self" Tag="K"/><ComboBoxItem Content="Relative" Tag="Y"/><ComboBoxItem Content="Other" Tag="D"/></ComboBox>
+                                        </Grid>
+                                    </Border>
+                                    <Popup x:Name="RecipientSuggestionPopup" Placement="Bottom" PlacementTarget="{Binding ElementName=RecipientPatientCard}" StaysOpen="False" AllowsTransparency="True">
+                                        <Border Width="390" MaxHeight="250" Background="White" BorderBrush="#BFCED4" BorderThickness="1" CornerRadius="0"><ListBox x:Name="RecipientSuggestionList" Tag="recipient" DisplayMemberPath="DisplayText" SelectionChanged="OnPatientSuggestionSelected"/></Border>
+                                    </Popup>
+                                </StackPanel>
+                            </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="DoctorInformationCard" Grid.Column="2" Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <Border Style="{StaticResource SectionHeader}" Padding="12,4" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Doctor Information" Style="{StaticResource SectionTitle}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="DoctorCompactSummaryText" Grid.Column="1" Margin="14,0,10,0" VerticalAlignment="Center"
+                                               Foreground="#466472" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+                                    <Button x:Name="DoctorInformationToggleButton" Grid.Column="2" Content="▼" Width="28" Height="24"
+                                            Padding="0" Background="Transparent" BorderThickness="0"
+                                            ToolTip="Hide doctor information" Click="OnDoctorInformationToggleClick" Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel x:Name="DoctorInformationContent" Margin="12,9,12,12">
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition Width="92"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel><TextBlock Text="Diploma Registration No." Style="{StaticResource FieldLabel}"/><TextBox x:Name="RegistrationNumberBox" MaxLength="16" Style="{StaticResource EntryBox}" KeyDown="OnRegistrationNumberKeyDown"/></StackPanel>
+                                <StackPanel Grid.Column="2"><TextBlock Text="Doctor Type" Style="{StaticResource FieldLabel}"/><ComboBox x:Name="PhysicianTypeBox" Style="{StaticResource EntryCombo}" SelectedValuePath="Tag" SelectedIndex="0"><ComboBoxItem Content="Doctor" Tag="1"/><ComboBoxItem Content="Dentist" Tag="2"/></ComboBox></StackPanel>
+                                <Button x:Name="DoctorSearchButton" Grid.Column="4" Content="Search" Tag="DoctorSearch" Style="{StaticResource ActionButton}" Margin="0,15,0,0" Click="OnActionClick"/>
+                            </Grid>
+                            <Grid Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <StackPanel><TextBlock Text="Doctor Diploma / Registration No." Style="{StaticResource FieldLabel}"/><TextBox x:Name="PhysicianRegistrationBox" MaxLength="20" Style="{StaticResource EntryBox}"/></StackPanel>
+                                <Grid Grid.Column="2">
+                                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="32"/></Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="18"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Doctor's First Name" Style="{StaticResource FieldLabel}"/>
+                                    <TextBlock Grid.Column="1" Text="/" Style="{StaticResource FieldLabel}" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="Doctor's Surname" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="PhysicianFirstNameBox" Grid.Row="1" MaxLength="30" Style="{StaticResource EntryBox}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="/" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="#52616C"/>
+                                    <TextBox x:Name="PhysicianLastNameBox" Grid.Row="1" Grid.Column="2" MaxLength="30" Style="{StaticResource EntryBox}"/>
+                                </Grid>
+                            </Grid>
+                            <WrapPanel Margin="0,8,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Specialty (*):" VerticalAlignment="Center" Foreground="#52616C" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="BranchNameText" Text="General Practitioner" VerticalAlignment="Center" Foreground="#1769AA" FontWeight="SemiBold" Margin="4,0,8,6"/>
+                                <Button Content="Select" Tag="BranchSelect" Style="{StaticResource ActionButton}" Click="OnActionClick"/>
+                                <TextBlock Text="Certificate (*):" VerticalAlignment="Center" Foreground="#52616C" FontWeight="SemiBold" Margin="8,0,6,6"/>
+                                <ComboBox x:Name="CertificateTypeBox" Width="145" Style="{StaticResource EntryCombo}" SelectedValuePath="Tag" SelectedIndex="0" Margin="0,0,8,6"><ComboBoxItem Content="None" Tag="0"/><ComboBoxItem Content="Hemodialysis" Tag="56"/><ComboBoxItem Content="Family Medicine" Tag="109"/></ComboBox>
+                            </WrapPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    </Grid>
+
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <Border x:Name="PrescriptionInformationHeader" Style="{StaticResource SectionHeader}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="PrescriptionInformationTitle" Text="Prescription Information" Style="{StaticResource SectionTitle}"/>
+                                    <TextBlock x:Name="PrescriptionCompactSummaryText" Grid.Column="1" Margin="14,0,10,0" VerticalAlignment="Center"
+                                               Foreground="#466472" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+                                    <Button x:Name="PrescriptionInformationToggleButton" Grid.Column="2" Content="▼" Width="28" Height="24"
+                                            Padding="0" Background="Transparent" BorderThickness="0"
+                                            ToolTip="Hide prescription information" Click="OnPrescriptionInformationToggleClick" Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel x:Name="PrescriptionInformationContent" Margin="12,9,12,12">
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="7"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="Coverage Type:" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center"/><ComboBox x:Name="ProvisionTypeBox" Grid.Column="2" Style="{StaticResource EntryCombo}" SelectedValuePath="Tag" SelectedIndex="0"><ComboBoxItem Content="Normal" Tag="1"/><ComboBoxItem Content="Traffic Accident" Tag="2"/><ComboBoxItem Content="Natural Disaster" Tag="3"/><ComboBoxItem Content="Forensic Case" Tag="4"/><ComboBoxItem Content="Workplace Accident" Tag="5"/><ComboBoxItem Content="Occupational Disease" Tag="6"/><ComboBoxItem Content="Maternity" Tag="7"/><ComboBoxItem Content="3713/21" Tag="8"/></ComboBox></Grid>
+                                <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="7"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="Protocol No. (*):" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center"/><TextBox x:Name="ProtocolNumberBox" Grid.Column="2" MaxLength="50" Style="{StaticResource EntryBox}"/></Grid>
+                                <Grid Grid.Column="4"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="7"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="Facility Code (*):" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center"/><Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox x:Name="FacilityCodeBox" MaxLength="8" Style="{StaticResource EntryBox}"/><Button Grid.Column="1" Content="Search" Tag="FacilitySearch" Style="{StaticResource ActionButton}" Height="32" MinWidth="42" Padding="6,0" Margin="5,0,0,0" FontSize="11" Click="OnActionClick"/><Button Grid.Column="2" Content="Departments" Tag="FacilityDepartments" Style="{StaticResource ActionButton}" Height="32" MinWidth="58" Padding="6,0" Margin="5,0,0,0" FontSize="11" Click="OnActionClick"/></Grid></Grid>
+                            </Grid>
+                            <Grid Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="7"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="Prescription Date (*):" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center"/><DatePicker x:Name="PrescriptionDateBox" Grid.Column="2" Style="{StaticResource EntryDate}" SelectedDateChanged="OnPrescriptionDateChanged" LostKeyboardFocus="OnPrescriptionDateLostFocus"/></Grid>
+                                <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="7"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="Dispensing Date (*):" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center"/><DatePicker x:Name="DispensingDateBox" Grid.Column="2" Style="{StaticResource EntryDate}" SelectedDateChanged="OnPrescriptionDateChanged" LostKeyboardFocus="OnPrescriptionDateLostFocus"/></Grid>
+                                <Grid x:Name="EPrescriptionNumberPanel" Grid.Column="4" Visibility="Collapsed"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="7"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="E-Prescription No.:" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center"/><TextBox x:Name="EPrescriptionNumberBox" Grid.Column="2" IsReadOnly="True" Style="{StaticResource EntryBox}" Background="#F3F7F8" Foreground="#0C5E88" FontWeight="SemiBold"/></Grid>
+                            </Grid>
+                            <TextBlock x:Name="DateValidationText" Visibility="Collapsed" Foreground="#B43434" FontSize="11" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            <Grid Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="7"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="Prescription Type:" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center"/><ComboBox x:Name="PrescriptionTypeBox" Grid.Column="2" Style="{StaticResource EntryCombo}" SelectedValuePath="Tag" SelectedIndex="0"><ComboBoxItem Content="Normal" Tag="1"/><ComboBoxItem Content="Red" Tag="2"/><ComboBoxItem Content="Orange" Tag="3"/><ComboBoxItem Content="Purple" Tag="4"/><ComboBoxItem Content="Green" Tag="5"/></ComboBox></Grid>
+                                <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="7"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="Prescription Subtype:" Style="{StaticResource FieldLabel}" Margin="0" VerticalAlignment="Center"/><ComboBox x:Name="PrescriptionSubTypeBox" Grid.Column="2" Style="{StaticResource EntryCombo}" SelectedValuePath="Tag" SelectedIndex="0"><ComboBoxItem Content="Outpatient" Tag="1"/><ComboBoxItem Content="Inpatient" Tag="2"/><ComboBoxItem Content="Discharged" Tag="3"/><ComboBoxItem Content="Day Case" Tag="4"/><ComboBoxItem Content="Emergency" Tag="5"/><ComboBoxItem Content="Green Zone" Tag="6"/><ComboBoxItem Content="Home Care" Tag="7"/><ComboBoxItem Content="Mobile Healthcare" Tag="8"/></ComboBox></Grid>
+                                <WrapPanel Grid.Column="4" VerticalAlignment="Center"><CheckBox x:Name="HasQrCodeBox" Content="With QR Code" Margin="0,5,14,0"/><CheckBox x:Name="SequentialDistributionBox" Content="Sequential Dispensing Prescription" Margin="0,5,0,0"/></WrapPanel>
+                            </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <Border Style="{StaticResource SectionHeader}" Padding="12,4">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="Medicine Information" Style="{StaticResource SectionTitle}" VerticalAlignment="Center"/>
+                                    <WrapPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <Button Content="Treatment Plan" Tag="TreatmentScheme" Style="{StaticResource ActionButton}" Height="24" MinWidth="62" Padding="7,0" Margin="0,0,4,0" FontSize="11" Click="OnActionClick"/>
+                                        <Button Content="Warning Code (New)" Tag="NewWarningCode" Style="{StaticResource ActionButton}" Height="24" MinWidth="92" Padding="7,0" Margin="0,0,4,0" FontSize="11" Click="OnActionClick"/>
+                                        <Button Content="Compounded Medicine" Tag="MagistralDrug" Style="{StaticResource ActionButton}" Height="24" MinWidth="58" Padding="7,0" Margin="0,0,4,0" FontSize="11" Click="OnActionClick"/>
+                                        <Button Content="Select Report" Tag="ReportSelection" Style="{StaticResource ActionButton}" Height="24" MinWidth="62" Padding="7,0" Margin="0,0,4,0" FontSize="11" Click="OnActionClick"/>
+                                        <Button Content="Warning Code" Tag="WarningCode" Style="{StaticResource ActionButton}" Height="24" MinWidth="68" Padding="7,0" Margin="0" FontSize="11" Click="OnActionClick"/>
+                                    </WrapPanel>
+                                </Grid>
+                            </Border>
+                            <StackPanel Margin="12,9,12,12">
+                            <Grid x:Name="DrugSearchAnchor" Margin="0,0,0,8" HorizontalAlignment="Left">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="620"/><ColumnDefinition Width="6"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBox x:Name="DrugQuickEntryBox" Style="{StaticResource EntryBox}" Height="34" Margin="0"
+                                         ToolTip="Enter at least 3 letters or a barcode"
+                                         TextChanged="OnDrugQuickEntryTextChanged" KeyDown="OnDrugQuickEntryKeyDown"/>
+                                <TextBlock IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#82919A"
+                                           Text="Medicine name or barcode" x:Name="DrugQuickEntryPlaceholder"/>
+                                <Button Grid.Column="2" Content="+" Width="36" Height="34" Margin="0" FontSize="18" FontWeight="SemiBold"
+                                        Style="{StaticResource PrimaryActionButton}" ToolTip="Add barcode to prescription" Click="OnAddDrugBarcodeClick"/>
+                                <Popup x:Name="DrugSuggestionPopup" PlacementTarget="{Binding ElementName=DrugQuickEntryBox}" Placement="Bottom"
+                                       StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+                                    <Border Width="760" MaxHeight="390" Background="White" BorderBrush="#BFCED4" BorderThickness="1" CornerRadius="0" Padding="4">
+                                        <ListBox x:Name="DrugSuggestionList" ItemsSource="{Binding DrugSuggestions}" BorderThickness="0"
+                                                 HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                 SelectionChanged="OnDrugSuggestionSelected">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="7,5"><Grid.ColumnDefinitions><ColumnDefinition Width="115"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Barcode}" Foreground="#52616C" FontSize="11" VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding Name}" TextWrapping="Wrap" Foreground="#263A47"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                            <DataGrid x:Name="DrugGrid" Style="{StaticResource MedulaDataGridStyle}" ItemsSource="{Binding Drugs}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" ColumnWidth="*"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                      SelectionMode="Single" SelectionUnit="FullRow" HeadersVisibility="Column" GridLinesVisibility="Horizontal" RowHeight="42" FontSize="14"
+                                      RowDetailsVisibilityMode="Visible"
+                                      ColumnHeaderHeight="46" MinHeight="160" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                      BorderBrush="#D7E0E4" BorderThickness="1" AlternatingRowBackground="#F4F7F8"
+                                      PreviewMouseRightButtonDown="OnDrugGridPreviewMouseRightButtonDown"
+                                      CellEditEnding="OnDrugGridCellEditEnding" SizeChanged="OnDrugGridSizeChanged">
+                                <DataGrid.RowDetailsTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#EAF4FF" BorderBrush="#B9D8F3" BorderThickness="0,1,0,0"
+                                                Padding="14,6">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding DiagnosisNote}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding DiagnosisNote}" Foreground="#1769AA"
+                                                       FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGrid.RowDetailsTemplate>
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,3"/>
+                                        <Setter Property="ContentTemplate">
+                                            <Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center" FontWeight="SemiBold"/></DataTemplate></Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+                                <DataGrid.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Special Condition" Tag="SpecialCondition" Click="OnDrugContextActionClick"/>
+                                        <MenuItem Header="Equivalent" Tag="Equivalent" Click="OnDrugContextActionClick"/>
+                                        <MenuItem Header="Medicine Information" Tag="DrugInformation" Click="OnDrugContextActionClick"/>
+                                        <MenuItem Header="Report" Tag="Report" Click="OnDrugContextActionClick"/>
+                                        <Separator/>
+                                        <MenuItem Header="Delete" Tag="Delete" Foreground="#B43434" Click="OnDrugContextActionClick"/>
+                                    </ContextMenu>
+                                </DataGrid.ContextMenu>
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="Barcode" SortMemberPath="Barcode" Width="1.1*" MinWidth="118">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="5,0">
+                                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Barcode}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                    <Border Grid.Column="1" Style="{StaticResource DrugErrorIndicator}">
+                                                        <TextBlock Text="!" Foreground="White" FontWeight="Bold"
+                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                                    <TextBox Text="{Binding Barcode, UpdateSourceTrigger=Explicit}" Padding="4,2"/>
+                                                    <Border Grid.Column="1" Style="{StaticResource DrugErrorIndicator}" Margin="5,0,2,0">
+                                                        <TextBlock Text="!" Foreground="White" FontWeight="Bold"
+                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="3.3*" MinWidth="250"/>
+                                    <DataGridTemplateColumn Header="Qty / Interval / Dose" Width="3.1*" MinWidth="350">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="38" Height="25" Padding="4,2"/>
+                                                    <TextBlock Text="{Binding OriginalQuantity, StringFormat=önce {0}}"
+                                                               Margin="4,0,0,0" VerticalAlignment="Center"
+                                                               Foreground="#B45C26" FontSize="10" FontWeight="SemiBold">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding OriginalQuantity}" Value="">
+                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    <TextBlock Text=" / " VerticalAlignment="Center"/>
+                                                    <TextBox Text="{Binding Period, UpdateSourceTrigger=PropertyChanged}" Width="38" Height="25" Padding="4,2"/>
+                                                    <ComboBox SelectedValue="{Binding PeriodUnit, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Tag" Width="72" Height="25" Margin="3,0">
+                                                        <ComboBoxItem Content="Per day" Tag="3"/><ComboBoxItem Content="Per week" Tag="4"/><ComboBoxItem Content="Per month" Tag="5"/><ComboBoxItem Content="Per year" Tag="6"/>
+                                                    </ComboBox>
+                                                    <TextBlock Text=" / " VerticalAlignment="Center"/>
+                                                    <TextBox Text="{Binding DoseCount, UpdateSourceTrigger=PropertyChanged}" Width="38" Height="25" Padding="4,2"/>
+                                                    <TextBlock Text=" x " VerticalAlignment="Center"/>
+                                                    <TextBox Text="{Binding DoseAmount, UpdateSourceTrigger=PropertyChanged}" Width="45" Height="25" Padding="4,2"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" IsReadOnly="True" Width="0.75*" MinWidth="62"/>
+                                    <DataGridTextColumn Header="Difference" Binding="{Binding Difference}" IsReadOnly="True" Width="0.75*" MinWidth="80"/>
+                                    <DataGridTextColumn Header="Shelf Quantity" Binding="{Binding ShelfQuantity}" IsReadOnly="True" Width="0.8*" MinWidth="68"/>
+                                    <DataGridTextColumn Header="Report" Binding="{Binding Report}" IsReadOnly="True" Width="0.8*" MinWidth="65"/>
+                                    <DataGridTextColumn Header="Dispensing Date" Binding="{Binding AvailableDate}" IsReadOnly="True" Width="1.15*" MinWidth="105"/>
+                                    <DataGridTextColumn Header="Message" Binding="{Binding DispensingMessage}" IsReadOnly="True" Width="2*" MinWidth="110"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionCard}">
+                        <StackPanel>
+                            <Border Style="{StaticResource SectionHeader}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="ICD-10 Diagnoses" Style="{StaticResource SectionTitle}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="DiagnosisCompactSummaryText" Grid.Column="1" Margin="14,0,10,0"
+                                               VerticalAlignment="Center" Foreground="#466472" FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+                                    <Button x:Name="DiagnosisInformationToggleButton" Grid.Column="2" Content="▼"
+                                            Width="28" Height="24" Padding="0" Background="Transparent" BorderThickness="0"
+                                            ToolTip="Hide ICD-10 diagnoses" Click="OnDiagnosisInformationToggleClick"
+                                            Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel x:Name="DiagnosisInformationContent" Margin="12,9,12,12">
+                            <Grid x:Name="DiagnosisSearchAnchor" Margin="0,0,0,8" HorizontalAlignment="Left">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="620"/><ColumnDefinition Width="6"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBox x:Name="DiagnosisSearchBox" Style="{StaticResource EntryBox}" Height="34" Margin="0" MaxLength="80"
+                                         ToolTip="Search ICD-10 codes or diagnoses with at least 3 characters"
+                                         TextChanged="OnDiagnosisSearchTextChanged" KeyDown="OnDiagnosisSearchKeyDown"/>
+                                <TextBlock x:Name="DiagnosisSearchPlaceholder" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#82919A"
+                                           Text="ICD-10 code or diagnosis"/>
+                                <Button Grid.Column="2" Content="+" Width="34" Height="34" Padding="0" Margin="0"
+                                        Style="{StaticResource PrimaryActionButton}" FontSize="18" ToolTip="Add ICD-10 diagnosis" Click="OnDiagnosisAddClick"/>
+                                <TextBlock Grid.Column="3" Text="Maximum 50 results" Foreground="#667680" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <Popup x:Name="DiagnosisSuggestionPopup" Placement="Bottom" PlacementTarget="{Binding ElementName=DiagnosisSearchAnchor}" StaysOpen="False" AllowsTransparency="True">
+                                    <Border Width="760" MaxHeight="340" Background="White" BorderBrush="#BFCED4" BorderThickness="1" CornerRadius="0">
+                                        <ListBox ItemsSource="{Binding DiagnosisSuggestions}" BorderThickness="0" HorizontalContentAlignment="Stretch"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="OnDiagnosisSuggestionSelected">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="7,5"><Grid.ColumnDefinitions><ColumnDefinition Width="115"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Code}" Foreground="#52616C" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding Description}" TextWrapping="Wrap" Foreground="#263A47"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                            <DataGrid x:Name="DiagnosisGrid" Style="{StaticResource MedulaDataGridStyle}" ItemsSource="{Binding Diagnoses}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                      IsReadOnly="False" HeadersVisibility="Column" GridLinesVisibility="Horizontal" RowHeight="38" ColumnHeaderHeight="46"
+                                      MinHeight="160" ColumnWidth="*" BorderBrush="#D7E0E4" BorderThickness="1" AlternatingRowBackground="#F4F7F8"
+                                      SizeChanged="OnDiagnosisGridSizeChanged" BeginningEdit="OnDiagnosisGridBeginningEdit"
+                                      RowEditEnding="OnDiagnosisGridRowEditEnding">
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,3"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+                                <DataGrid.Columns><DataGridTextColumn Header="ICD-10" Binding="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Width="1.2*" MinWidth="130"/><DataGridTextColumn Header="Diagnosis" Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Width="6*" MinWidth="420"/></DataGrid.Columns>
+                            </DataGrid>
+                            </StackPanel>
+                            <WrapPanel x:Name="PrescriptionEntryActionsPanel" HorizontalAlignment="Center" Margin="0,14,0,4">
+                                <Button x:Name="PrescriptionSaveButton" Content="Save" Tag="SavePrescription" Style="{StaticResource PrimaryActionButton}" Click="OnActionClick"/><Button x:Name="ViewElectronicPrescriptionButton" Content="View E-Prescription" Style="{StaticResource ActionButton}" Visibility="Collapsed" Click="OnViewElectronicPrescriptionClick"/><Button Content="New Prescription" Tag="NewPrescription" Style="{StaticResource ActionButton}" Click="OnActionClick"/><Button Content="E-Prescription Query" Tag="ElectronicPrescriptionQuery" Style="{StaticResource ActionButton}" Click="OnActionClick"/><Button Content="Previous Prescription" Tag="PreviousPrescription" Style="{StaticResource ActionButton}" Click="OnActionClick"/><Button Content="Next Prescription" Tag="NextPrescription" Style="{StaticResource ActionButton}" Click="OnActionClick"/>
+                            </WrapPanel>
+                            <Border x:Name="SavedPrescriptionPanel" Visibility="Collapsed" Margin="0,14,0,4"
+                                    Background="#F7FBFC" BorderBrush="#BFD3DB" BorderThickness="1" CornerRadius="0">
+                                <StackPanel>
+                                    <Border x:Name="SavedPrescriptionTitleBorder" Background="#DCEEF5"
+                                            Padding="12,8" CornerRadius="0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <TextBlock x:Name="SavedPaymentTitleText" Text="Prescription Amounts" Style="{StaticResource SectionTitle}"/>
+                                            <Button x:Name="SavedPaymentToggleButton" Grid.Column="1" Content="▼" Width="28" Height="24"
+                                                    Padding="0" Background="Transparent" BorderThickness="0"
+                                                    ToolTip="Show all amounts" Click="OnSavedPaymentToggleClick" Visibility="Collapsed"/>
+                                        </Grid>
+                                    </Border>
+                                    <Grid x:Name="SavedPaymentFieldsPanel" Margin="12,12,12,5"/>
+                                    <StackPanel x:Name="SavedPrescriptionActionsPanel" Margin="12,5,6,8">
+                                        <UniformGrid x:Name="SavedPrescriptionPrimaryActions" Columns="7"
+                                                     HorizontalAlignment="Stretch"/>
+                                        <UniformGrid x:Name="SavedPrescriptionSecondaryActions" Columns="3"
+                                                     HorizontalAlignment="Stretch"/>
+                                        <UniformGrid x:Name="SavedPrescriptionNavigationActions" Columns="2"
+                                                     HorizontalAlignment="Stretch"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <CheckBox x:Name="RepeatEligibilityBox" Content="Repeat eligibility query for the same day" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border x:Name="MedulaResponsePanel" Grid.Column="2" Visibility="Collapsed" Background="White" BorderBrush="#D9E2E6" BorderThickness="1" CornerRadius="0" Padding="14">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <TextBlock Text="Medula Response" FontSize="16" FontWeight="SemiBold" Foreground="#263A47"/>
+                    <Border Grid.Row="1" x:Name="ResponseBanner" Background="#F2F5F6" CornerRadius="0" Padding="10" Margin="0,10,0,10"><TextBlock x:Name="ResponseMessageText" Text="Opening prescription entry…" TextWrapping="Wrap" Foreground="#52616C"/></Border>
+                    <TextBlock Grid.Row="2" x:Name="ResponseUrlText" Text="—" Foreground="#75838C" FontSize="10" TextTrimming="CharacterEllipsis" Margin="0,0,0,8" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                    <TextBox Grid.Row="3" x:Name="ResponsePageText" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="#F8FAFA" Foreground="#43535D" Padding="9"/>
+                    <StackPanel Grid.Row="4" Margin="0,10,0,0">
+                        <Button x:Name="ReturnToEntryButton" Content="Back to Prescription" Style="{StaticResource PrimaryActionButton}" Margin="0,0,0,7" Click="OnReturnToEntryClick"/>
+                        <Button Content="Show Background Browser" Style="{StaticResource ActionButton}" Margin="0" Click="OnShowBrowserClick"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border x:Name="RemoteScreenLayer" Grid.ColumnSpan="3" Visibility="Collapsed"
+                    Background="#F4F7F8" BorderBrush="#CCD8DD" BorderThickness="1" CornerRadius="0" Padding="18">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock x:Name="RemoteTitleText" Text="Medula" FontSize="18" FontWeight="SemiBold" Foreground="#263A47"/>
+                            <TextBlock x:Name="RemoteMessageText" Margin="0,4,0,0" Foreground="#52616C" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="12,0,0,0">
+                            <Button Content="Back to Prescription" Style="{StaticResource PrimaryActionButton}"
+                                    Margin="0" Click="OnCloseRemoteScreenClick"/>
+                            <Button x:Name="RemoteParentButton" Visibility="Collapsed" Style="{StaticResource ActionButton}"
+                                    Margin="7,0,0,0" Click="OnReturnToRemoteParentClick"/>
+                        </StackPanel>
+                    </Grid>
+                    <WrapPanel x:Name="OffLabelTabsPanel" Grid.Row="1" Visibility="Collapsed" Margin="0,14,0,2">
+                        <Button Content="Previous Permissions" Tag="OffLabelOld" Style="{StaticResource ActionButton}" Click="OnOffLabelTabClick"/>
+                        <Button Content="Per Person (New)" Tag="OffLabelNew" Style="{StaticResource ActionButton}" Click="OnOffLabelTabClick"/>
+                    </WrapPanel>
+                    <WrapPanel x:Name="RemoteActionsPanel" Grid.Row="2" Margin="0,10,0,6"/>
+                    <ScrollViewer x:Name="RemoteContentScrollViewer" Grid.Row="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <WrapPanel x:Name="RemoteFieldsPanel" Margin="0,0,0,10"/>
+                            <StackPanel x:Name="RemoteTablesPanel"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                    <Grid x:Name="ItsQrRetailPanel" Grid.Row="1" Grid.RowSpan="3" Visibility="Collapsed" Margin="0,14,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition Width="40"/></Grid.ColumnDefinitions>
+                            <TextBox x:Name="ItsQrBackendTextBox" Visibility="Collapsed"/>
+                            <TextBox x:Name="ItsQrEntryTextBox" Height="40" Padding="11,8" FontSize="14"
+                                     BorderBrush="#CBD7DB" BorderThickness="1" Background="White"
+                                     ToolTip="Enter a QR code" PreviewKeyDown="OnItsQrEntryKeyDown"/>
+                            <Button Grid.Column="2" Width="40" Height="40" Content="+" FontSize="22" FontWeight="SemiBold"
+                                    Background="#315A73" Foreground="White" BorderThickness="0"
+                                    ToolTip="Add QR code and list in Medula" Click="OnItsQrAddClick"/>
+                        </Grid>
+                        <TextBlock x:Name="ItsQrRetailMessageText" Grid.Row="1" MinHeight="18" Margin="0,7,0,8"
+                                   Foreground="#B33A32" FontSize="13" TextWrapping="Wrap"/>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="560"/>
+                                <ColumnDefinition Width="14"/>
+                                <ColumnDefinition Width="270"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid x:Name="ItsQrMedicationTableHost">
+                                    <Border VerticalAlignment="Top"
+                                            MaxHeight="{Binding ActualHeight, ElementName=ItsQrMedicationTableHost}"
+                                            Background="White" BorderBrush="#D5E0E3" BorderThickness="1"
+                                            CornerRadius="0" ClipToBounds="True">
+                                        <DataGrid x:Name="ItsQrMedicationGrid" ItemsSource="{Binding ItsQrMedicationRows}"
+                                              AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                              CanUserSortColumns="False" IsReadOnly="True" HeadersVisibility="Column"
+                                              GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E7EDEF"
+                                              BorderThickness="0" RowHeight="44" ColumnHeaderHeight="38"
+                                              SelectionMode="Single" SelectionUnit="FullRow">
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow" BasedOn="{StaticResource SubtleDataGridRowStyle}">
+                                                <Setter Property="DetailsVisibility" Value="Collapsed"/>
+                                                <Setter Property="Background" Value="#FCE8E8"/>
+                                                <Setter Property="Foreground" Value="#7F2525"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsBalanced}" Value="True">
+                                                        <Setter Property="Background" Value="#E2F4E8"/>
+                                                        <Setter Property="Foreground" Value="#225E39"/>
+                                                    </DataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding IsExpanded}" Value="True"/>
+                                                            <Condition Binding="{Binding HasQrCodes}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="DetailsVisibility" Value="Visible"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+                                        <DataGrid.Columns>
+                                            <DataGridTemplateColumn Header="Product Name" Width="*" MinWidth="260">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <DockPanel LastChildFill="True">
+                                                            <ToggleButton DockPanel.Dock="Left" Width="28" Height="28" Margin="4,0,7,0"
+                                                                          IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                                                          Click="OnItsQrMedicationExpandClick"
+                                                                          ToolTip="Show QR codes">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton" BasedOn="{StaticResource SquareToggleButtonStyle}">
+                                                                        <Setter Property="Background" Value="Transparent"/>
+                                                                        <Setter Property="BorderThickness" Value="0"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding HasQrCodes}" Value="False">
+                                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
+                                                                <Path Data="M0,0 L6,6.5 L0,13" Stroke="#4F626D" StrokeThickness="2.2"
+                                                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                                      StrokeLineJoin="Round" HorizontalAlignment="Center"
+                                                                      VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                                                    <Path.Style>
+                                                                        <Style TargetType="Path">
+                                                                            <Setter Property="RenderTransform"><Setter.Value><RotateTransform Angle="0"/></Setter.Value></Setter>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                                                    <Setter Property="RenderTransform"><Setter.Value><RotateTransform Angle="90"/></Setter.Value></Setter>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Path.Style>
+                                                                </Path>
+                                                            </ToggleButton>
+                                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"
+                                                                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                        </DockPanel>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="135"/>
+                                            <DataGridTextColumn Header="Prescription Count" Binding="{Binding PrescribedQuantity}" Width="95"/>
+                                            <DataGridTextColumn Header="QR Code Count" Binding="{Binding QrQuantity}" Width="95"/>
+                                            <DataGridTextColumn Header="ITS Sale Notification" Binding="{Binding SaleStatusText}" Width="125"/>
+                                        </DataGrid.Columns>
+                                        <DataGrid.RowDetailsTemplate>
+                                            <DataTemplate>
+                                                <ItemsControl ItemsSource="{Binding QrCodes}" Margin="38,0,0,4">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Background="#F4F8F9" BorderBrush="#E0E9EB"
+                                                                    BorderThickness="0,1,0,0" Padding="12,8">
+                                                                <Border.ContextMenu>
+                                                                    <ContextMenu>
+                                                                        <MenuItem Header="Copy QR Code" Click="OnCopyItsQrCodeClick"/>
+                                                                        <MenuItem Header="Remove QR Code" Click="OnRemoveItsQrCodeClick"/>
+                                                                    </ContextMenu>
+                                                                </Border.ContextMenu>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="125"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Text="{Binding Code}" FontFamily="Consolas"
+                                                                               Foreground="#53656F" TextTrimming="CharacterEllipsis"/>
+                                                                    <TextBlock Grid.Column="1" Text="{Binding SaleStatusText}"
+                                                                               Foreground="#53656F" Padding="10,0"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </DataTemplate>
+                                        </DataGrid.RowDetailsTemplate>
+                                        </DataGrid>
+                                    </Border>
+                                </Grid>
+                                <WrapPanel x:Name="ItsQrPaymentPanel" Grid.Row="1" Margin="0,14,0,0"/>
+                            </Grid>
+                            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          PanningMode="VerticalOnly">
+                                <StackPanel Margin="0,0,3,0">
+                                    <Border Background="White" BorderBrush="#D5E0E3" BorderThickness="1" CornerRadius="0" Padding="14">
+                                    <StackPanel>
+                                        <TextBlock Text="Patient" Foreground="#71808A" FontSize="12" Margin="0,0,0,7"/>
+                                        <TextBlock Text="Full name" Foreground="#71808A" FontSize="11"/>
+                                        <TextBlock x:Name="ItsQrPatientNameText" Text="—" FontSize="16" FontWeight="SemiBold" Foreground="#263640" Margin="0,2,0,7" TextWrapping="Wrap"/>
+                                        <TextBlock Text="National ID No." Foreground="#71808A" FontSize="11"/>
+                                        <TextBlock x:Name="ItsQrPatientIdentityText" Text="—" Foreground="#52616C" Margin="0,2,0,7"/>
+                                        <StackPanel x:Name="ItsQrPatientPhonePanel">
+                                            <TextBlock Text="Primary Phone" Foreground="#71808A" FontSize="11"/>
+                                            <TextBlock x:Name="ItsQrPatientPhoneText" Text="—" Foreground="#52616C" Margin="0,2,0,7"/>
+                                        </StackPanel>
+                                        <StackPanel x:Name="ItsQrPatientFamilyPanel">
+                                            <TextBlock Text="Family Group" Foreground="#71808A" FontSize="11"/>
+                                            <TextBlock x:Name="ItsQrPatientFamilyText" Text="—" Foreground="#52616C" Margin="0,2,0,7" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,5,0,3">
+                                            <CheckBox x:Name="ItsQrTotalDebtCheckBox" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="ItsQrPatientDebtText" Text="Total debt: TRY 0.00" Foreground="#1769AA" FontWeight="SemiBold" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <CheckBox x:Name="ItsQrOwnerDebtCheckBox" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="ItsQrOwnerDebtText" Text="Prescription owner debt: TRY 0.00" Foreground="#1769AA" FontSize="11" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <CheckBox x:Name="ItsQrRecipientDebtCheckBox" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="ItsQrRecipientDebtText" Text="Recipient debt: —" Foreground="#1769AA" FontSize="11" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel x:Name="ItsQrFamilyDebtPanel" Orientation="Horizontal" Margin="0,2,0,0">
+                                            <CheckBox x:Name="ItsQrFamilyDebtCheckBox" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="ItsQrFamilyDebtText" Text="Family group debt: TRY 0.00" Foreground="#1769AA" FontSize="11" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    </Border>
+                                    <Border Background="White" BorderBrush="#D5E0E3" BorderThickness="1"
+                                            CornerRadius="0" Padding="14" Margin="0,12,0,0">
+                                        <StackPanel>
+                                            <TextBlock Text="Prescription" Foreground="#71808A" FontSize="12" Margin="0,0,0,7"/>
+                                            <TextBlock x:Name="ItsQrPrescriptionText" Text="—" Foreground="#263640" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="ItsQrBalanceText" Text="0 / 0 QR Code" Foreground="#B33A32" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                        <WrapPanel x:Name="ItsQrActionsPanel" Grid.Row="3" HorizontalAlignment="Right" Margin="0,10,0,0"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Popup x:Name="InlineRemotePopup" Grid.ColumnSpan="3" StaysOpen="False"
+                   AllowsTransparency="True" PopupAnimation="Fade" Placement="Bottom"
+                   Closed="OnInlineRemotePopupClosed">
+                <Border x:Name="InlineRemoteCard" Width="760" MaxHeight="620" Margin="8" Padding="16"
+                        Background="White" BorderBrush="#BFCED4" BorderThickness="1" CornerRadius="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock x:Name="InlineRemoteTitleText" FontSize="19" FontWeight="SemiBold" Foreground="#263A47"/>
+                                <TextBlock x:Name="InlineRemoteMessageText" Margin="0,3,0,0" Foreground="#52616C" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <TextBlock x:Name="InlineRemoteDismissHint" Grid.Column="1" Text="Click outside to close" Foreground="#75838C"
+                                       FontSize="10" VerticalAlignment="Top" Margin="14,4,0,0"/>
+                            <Button x:Name="InlineRemoteCloseButton" Grid.Column="1" Content="×" Visibility="Collapsed"
+                                    Width="32" Height="32" Margin="12,-5,-5,-5" FontSize="20"
+                                    Foreground="#344852" Background="Transparent" BorderThickness="0"
+                                    ToolTip="Close" Click="OnInlineRemoteCloseClick"/>
+                        </Grid>
+                        <WrapPanel x:Name="InlineRemoteActionsPanel" Grid.Row="1" Margin="0,10,0,5"/>
+                        <ScrollViewer Grid.Row="2" MaxHeight="500" VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                                <WrapPanel x:Name="InlineRemoteFieldsPanel" Margin="0,0,0,10"/>
+                                <StackPanel x:Name="InlineRemoteTablesPanel"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                        <WrapPanel x:Name="InlineRemoteBottomActionsPanel" Grid.Row="3"
+                                   HorizontalAlignment="Right" Margin="0,10,0,0"/>
+                    </Grid>
+                </Border>
+            </Popup>
+        </Grid>
+
+        <Border x:Name="DocumentPopupLayer" Grid.RowSpan="2" Visibility="Collapsed" Panel.ZIndex="35"
+                Background="#660F1F26" Padding="24">
+            <Border Width="960" MaxHeight="650" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="White" BorderBrush="#BFCED4" BorderThickness="1" CornerRadius="0">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <Border Background="#DCEEF5" CornerRadius="0" Padding="16,11">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Add Document to Prescription" FontSize="19" FontWeight="SemiBold" Foreground="#263A47"/>
+                                <TextBlock x:Name="DocumentMessageText" Margin="0,3,0,0" Foreground="#52616C" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="×" Width="32" Height="32" Margin="12,-4,-4,-4"
+                                    FontSize="20" Foreground="#344852" Background="Transparent" BorderThickness="0"
+                                    ToolTip="Close" Click="OnCloseDocumentPopupClick"/>
+                        </Grid>
+                    </Border>
+                    <ScrollViewer Grid.Row="1" MaxHeight="570" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="16">
+                            <Border BorderBrush="#D8E3E7" BorderThickness="1" CornerRadius="0" Background="#F9FBFB">
+                                <StackPanel>
+                                    <Border Background="#E7F2F6" CornerRadius="0" Padding="13,8">
+                                        <TextBlock Text="Document Information" FontSize="14" FontWeight="SemiBold" Foreground="#294854"/>
+                                    </Border>
+                                    <Grid Margin="13,12,13,13">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/><ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Add Document" VerticalAlignment="Center" Margin="0,0,12,0"
+                                                   Foreground="#52616C" FontWeight="SemiBold"/>
+                                        <ComboBox x:Name="DocumentTypeComboBox" Grid.Column="1" Height="32" Margin="0,0,8,0"
+                                                  DisplayMemberPath="Text" SelectedValuePath="Value"/>
+                                        <Button x:Name="DocumentSelectFileButton" Grid.Column="2" Content="Choose File" Height="32"
+                                                Padding="13,0" Margin="0,0,8,0" Style="{StaticResource ActionButton}"
+                                                Click="OnSelectDocumentFileClick"/>
+                                        <TextBlock x:Name="DocumentFileNameText" Grid.Column="3" Text="No file selected"
+                                                   VerticalAlignment="Center" Foreground="#6B7B84" TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                                        <Button x:Name="DocumentAddButton" Grid.Column="4" Content="Add Document" Height="32"
+                                                Padding="15,0" Margin="10,0,0,0" Style="{StaticResource PrimaryActionButton}"
+                                                Click="OnAddDocumentClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <Border Margin="0,13,0,0" BorderBrush="#D8E3E7" BorderThickness="1" CornerRadius="0" Background="White" Padding="0">
+                                <Grid MinHeight="190">
+                                    <DataGrid x:Name="DocumentTable" AutoGenerateColumns="True" IsReadOnly="True"
+                                              CanUserAddRows="False" CanUserDeleteRows="False" RowHeaderWidth="0"
+                                              HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                                              HorizontalGridLinesBrush="#E7ECEF" BorderThickness="0" RowHeight="36"
+                                              ColumnHeaderHeight="38"/>
+                                    <TextBlock x:Name="DocumentEmptyText" Text="No documents attached to this prescription"
+                                               Foreground="#C43D3D" FontWeight="SemiBold" HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Border>
+
+        <StackPanel x:Name="DirectoryNotificationStack" Grid.RowSpan="2" Width="410"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="18"
+                    Panel.ZIndex="20"/>
+    </Grid>
+    </DockPanel>
+</UserControl>

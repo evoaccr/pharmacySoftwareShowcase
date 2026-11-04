@@ -1,0 +1,55 @@
+<UserControl x:Class="pharmacyApp.Modules.Invoices.InvoiceAddressListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F2F3F4" Loaded="OnLoaded" Unloaded="OnUnloaded">
+    <Grid Margin="16">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border Background="White" BorderBrush="#C8CDD2" BorderThickness="1" CornerRadius="0" Padding="12" Margin="0,0,0,12">
+            <DockPanel LastChildFill="True">
+                <Button x:Name="RefreshButton" DockPanel.Dock="Right" Width="42" Height="32" Margin="12,15,0,0"
+                        Background="#294C62" Foreground="White" BorderBrush="#294C62" ToolTip="Refresh" Click="OnRefreshClicked">
+                    <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                </Button>
+                <WrapPanel VerticalAlignment="Bottom">
+                    <StackPanel Margin="0,0,12,0">
+                        <TextBlock Text="Search" Foreground="#65717E" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox x:Name="SearchBox" Width="310" Height="32" Padding="9,5"
+                                 ToolTip="Name, tax/national ID or GLN" KeyDown="OnSearchKeyDown"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="ID filter" Foreground="#65717E" FontSize="11" Margin="0,0,0,4"/>
+                        <ComboBox x:Name="IdentityFilterBox" Width="190" Height="32" DisplayMemberPath="DisplayName"
+                                  SelectionChanged="OnFilterChanged"/>
+                    </StackPanel>
+                </WrapPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <DataGrid x:Name="AddressGrid" ItemsSource="{Binding Addresses}" AutoGenerateColumns="False" IsReadOnly="True"
+                      CanUserAddRows="False" CanUserDeleteRows="False" RowHeight="36" ColumnHeaderHeight="38"
+                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E8ECEF"
+                      BorderBrush="#C8CDD2" BorderThickness="1" RowStyle="{StaticResource SubtleDataGridRowStyle}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" Binding="{Binding RecordId}" Width="75"/>
+                    <DataGridTextColumn Header="Name / Organization" Binding="{Binding PartyName}" Width="*" MinWidth="280"/>
+                    <DataGridTextColumn Header="Tax ID / National ID" Binding="{Binding IdentityNo}" Width="145"/>
+                    <DataGridTextColumn Header="GLN" Binding="{Binding Gln}" Width="145"/>
+                    <DataGridTextColumn Header="Sender" Binding="{Binding SentInvoiceCount, StringFormat={}{0:N0}}" Width="100"/>
+                    <DataGridTextColumn Header="Recipient" Binding="{Binding ReceivedInvoiceCount, StringFormat={}{0:N0}}" Width="100"/>
+                    <DataGridTextColumn Header="Total Invoice Amount" Binding="{Binding TotalInvoiceCount, StringFormat={}{0:N0}}" Width="115"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Border x:Name="BusyLayer" Background="#EFFFFFFF" Visibility="Collapsed">
+                <StackPanel Width="280" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <ProgressBar Height="6" IsIndeterminate="True"/>
+                    <TextBlock Text="Loading addresses…" TextAlignment="Center" Margin="0,10,0,0" Foreground="#60717B"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <DockPanel Grid.Row="2" Margin="2,9,2,0">
+            <TextBlock x:Name="CountText" DockPanel.Dock="Right" Foreground="#5E6770"/>
+            <TextBlock x:Name="StatusText" Foreground="#8D2E2E" TextWrapping="Wrap"/>
+        </DockPanel>
+    </Grid>
+</UserControl>

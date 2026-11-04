@@ -1,0 +1,260 @@
+<UserControl x:Class="pharmacyApp.Modules.Takas.TakasEntryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:takas="clr-namespace:pharmacyApp.Modules.Takas"
+             Loaded="OnLoaded"
+             Unloaded="OnUnloaded">
+    <UserControl.Resources>
+        <Style x:Key="InputBox" TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="11,7"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#CBD7DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="18,0"/>
+            <Setter Property="Background" Value="#6D28D9"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" CornerRadius="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Border" Property="Background" Value="#5B21B6"/></Trigger>
+                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Border" Property="Background" Value="#4C1D95"/></Trigger>
+                            <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SummaryLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#71808A"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style x:Key="SummaryValue" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#263640"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,2,0,12"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="360"/>
+                <ColumnDefinition Width="18"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid>
+                <TextBox x:Name="PharmacySearchBox" Style="{StaticResource InputBox}"
+                         TextChanged="OnPharmacySearchTextChanged"
+                         ToolTip="Search by pharmacy, pharmacist or GLN"/>
+                <TextBlock x:Name="PharmacyPlaceholder" Text="Search receiving pharmacies (at least 2 characters)"
+                           Margin="12,0" VerticalAlignment="Center" Foreground="#8A98A1"
+                           IsHitTestVisible="False"/>
+                <Popup x:Name="PharmacySuggestionPopup" Placement="Bottom"
+                       PlacementTarget="{Binding ElementName=PharmacySearchBox}"
+                       StaysOpen="False" AllowsTransparency="True">
+                    <Border Width="420" MaxHeight="300" Margin="0,4,0,0" Padding="4"
+                            Background="White" BorderBrush="#CAD7DB" BorderThickness="1" CornerRadius="0">
+                        <ListBox x:Name="PharmacySuggestionList" BorderThickness="0"
+                                 SelectionChanged="OnPharmacySuggestionSelected">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type takas:TakasPharmacySuggestion}">
+                                    <TextBlock Text="{Binding DisplayText, Mode=OneWay}"
+                                               Padding="8,7" Foreground="#263640"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                </Popup>
+            </Grid>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBox x:Name="QrCodeInput" Width="430" Style="{StaticResource InputBox}"
+                         KeyDown="OnQrCodeKeyDown" ToolTip="Medicine QR code"/>
+                <Button Width="42" Height="38" Margin="8,0,0,0" Content="+" FontSize="22"
+                        Background="#315A73" Foreground="White" BorderThickness="0"
+                        Click="OnAddItemClicked" ToolTip="Add QR code to trade"/>
+            </StackPanel>
+        </Grid>
+
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="700"/>
+                <ColumnDefinition Width="18"/>
+                <ColumnDefinition Width="330"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Background="White" BorderBrush="#D5E0E3" BorderThickness="1" CornerRadius="0" ClipToBounds="True">
+                <DataGrid x:Name="TakasGrid" AutoGenerateColumns="False" CanUserAddRows="False"
+                          CanUserDeleteRows="False" CanUserSortColumns="False" IsReadOnly="True"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E7EDEF" BorderThickness="0"
+                          SelectionMode="Single" SelectionUnit="FullRow"
+                          RowHeight="44" ColumnHeaderHeight="38"
+                          SelectionChanged="OnTakasGroupSelected">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove Medicine" Click="OnRemoveGroupClicked"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource SubtleDataGridRowStyle}">
+                            <Setter Property="DetailsVisibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                    <Setter Property="DetailsVisibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Product Name" Width="*" MinWidth="260">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <ToggleButton DockPanel.Dock="Left" Width="28" Height="28" Margin="4,0,7,0"
+                                                      IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                                      Click="OnTakasGroupExpandClicked"
+                                                      Background="Transparent" BorderThickness="0" ToolTip="Show QR codes">
+                                            <Path Data="M0,0 L6,6.5 L0,13" Stroke="#4F626D" StrokeThickness="2.2"
+                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                                <Path.Style>
+                                                    <Style TargetType="Path">
+                                                        <Setter Property="RenderTransform"><Setter.Value><RotateTransform Angle="0"/></Setter.Value></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                                <Setter Property="RenderTransform"><Setter.Value><RotateTransform Angle="90"/></Setter.Value></Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Path.Style>
+                                            </Path>
+                                        </ToggleButton>
+                                        <TextBlock Text="{Binding ProductName, Mode=OneWay}" VerticalAlignment="Center"
+                                                   FontWeight="SemiBold" Foreground="#273740" TextTrimming="CharacterEllipsis"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Stock" Binding="{Binding StockDisplay, Mode=OneWay}" Width="75"/>
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, Mode=OneWay}" Width="70"/>
+                        <DataGridTextColumn Header="Unit Cost" Binding="{Binding UnitCostDisplay, Mode=OneWay}" Width="115"/>
+                        <DataGridTextColumn Header="Unit Trade Value" Binding="{Binding UnitDebtDisplay, Mode=OneWay}" Width="115"/>
+                        <DataGridTextColumn Header="Total Trade Value" Binding="{Binding TotalDebtDisplay, Mode=OneWay}" Width="125"/>
+                    </DataGrid.Columns>
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Entries}" Margin="37,0,0,4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type takas:TakasCartLine}">
+                                        <Border Background="#F4F8F9" BorderBrush="#E0E9EB" BorderThickness="0,1,0,0"
+                                                Padding="12,8" MouseLeftButtonDown="OnTakasEntrySelected">
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Remove QR Code" Click="OnRemoveLineClicked"/>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="75"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                    <ColumnDefinition Width="115"/>
+                                                    <ColumnDefinition Width="115"/>
+                                                    <ColumnDefinition Width="125"/>
+                                                </Grid.ColumnDefinitions>
+                                                <DockPanel LastChildFill="True">
+                                                    <TextBlock Text="{Binding ExpiryDisplay, Mode=OneWay}" DockPanel.Dock="Right"
+                                                               Margin="12,0,8,0" Foreground="#6B7B84" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding QrCode, Mode=OneWay}" Foreground="#53656F"
+                                                               FontFamily="Consolas" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                                </DockPanel>
+                                                <TextBlock Grid.Column="3" Text="{Binding EntryCostDisplay, Mode=OneWay}"
+                                                           Foreground="#53656F" VerticalAlignment="Center" Padding="10,0"/>
+                                                <TextBox Grid.Column="4"
+                                                         Text="{Binding DebtAmount, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=N2}"
+                                                         Padding="5,3" Margin="4" VerticalContentAlignment="Center"/>
+                                                <TextBlock Grid.Column="5" Text="{Binding DebtAmountDisplay, Mode=OneWay}"
+                                                           Foreground="#53656F" VerticalAlignment="Center" Padding="10,0"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
+            </Border>
+
+            <Border Grid.Column="2" Padding="18" BorderBrush="#D7E0E4" BorderThickness="1"
+                    CornerRadius="0" Background="#FAFCFC">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Trade Summary" FontSize="19" FontWeight="SemiBold" Foreground="#263640" Margin="0,0,0,14"/>
+                        <Border Height="118" Background="White" BorderBrush="#DCE5E8" BorderThickness="1" CornerRadius="0" Margin="0,0,0,14">
+                            <Grid>
+                                <Image x:Name="SummaryPhoto" Stretch="Uniform" Margin="8"/>
+                                <TextBlock x:Name="NoPhotoText" Text="No Medicine Selected" Foreground="#8A98A1"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <TextBlock Text="Selected medicine" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="SummaryProductName" Text="—" Style="{StaticResource SummaryValue}" TextWrapping="Wrap"/>
+                        <UniformGrid Columns="2">
+                            <StackPanel><TextBlock Text="Wholesale price" Style="{StaticResource SummaryLabel}"/><TextBlock x:Name="SummaryWarehousePrice" Text="—" Style="{StaticResource SummaryValue}"/></StackPanel>
+                            <StackPanel><TextBlock Text="Sale price" Style="{StaticResource SummaryLabel}"/><TextBlock x:Name="SummarySalePrice" Text="—" Style="{StaticResource SummaryValue}"/></StackPanel>
+                            <StackPanel><TextBlock Text="Public Price" Style="{StaticResource SummaryLabel}"/><TextBlock x:Name="SummaryPublicPrice" Text="—" Style="{StaticResource SummaryValue}"/></StackPanel>
+                            <StackPanel><TextBlock Text="Stock" Style="{StaticResource SummaryLabel}"/><TextBlock x:Name="SummaryStock" Text="—" Style="{StaticResource SummaryValue}"/></StackPanel>
+                        </UniformGrid>
+                        <Separator Margin="0,2,0,14"/>
+                        <TextBlock x:Name="CounterpartyPharmacyLabel" Text="Receiving pharmacy" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="SelectedPharmacyName" Text="No pharmacy selected" Style="{StaticResource SummaryValue}" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="CounterpartyGlnLabel" Text="Recipient GLN" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="CounterpartyGlnText" Text="—" Style="{StaticResource SummaryValue}"/>
+                        <TextBlock Text="This pharmacy's current debt" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="CurrentDebtText" Text="—" Style="{StaticResource SummaryValue}"/>
+                        <TextBlock x:Name="LocalGlnLabel" Text="Sending pharmacy GLN" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="LocalGlnText" Text="Not configured" Style="{StaticResource SummaryValue}"/>
+                        <TextBlock Text="Note" Style="{StaticResource SummaryLabel}"/>
+                        <TextBox x:Name="NotesBox" Height="62" AcceptsReturn="True" TextWrapping="Wrap"
+                                 Padding="8" BorderBrush="#CBD7DB" BorderThickness="1"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock x:Name="StatusText" Foreground="#667680" TextWrapping="Wrap"/>
+                <TextBlock x:Name="TotalsText" Margin="0,5,0,0" FontSize="17" FontWeight="SemiBold" Foreground="#263640"/>
+            </StackPanel>
+            <Button Grid.Column="1" Content="Clear List" Margin="12,0" Padding="16,0" Height="42"
+                    Click="OnClearClicked"/>
+            <Button x:Name="CompleteTakasButton" Grid.Column="2" Style="{StaticResource PrimaryButton}"
+                    Content="Complete Outgoing Trade" Click="OnCompleteTakasClicked"/>
+        </Grid>
+    </Grid>
+</UserControl>

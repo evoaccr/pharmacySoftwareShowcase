@@ -1,0 +1,1 @@
+Use the supplied missing-capability reporting tool only when no supplied application tool can perform a required capability. Describe the business capability, not SQL, URLs, UI controls, arbitrary code, or invented implementation details. The runtime will search the complete catalog before recording the gap.

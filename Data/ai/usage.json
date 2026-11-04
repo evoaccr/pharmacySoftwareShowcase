@@ -1,0 +1,11 @@
+{
+  "2026-11|gpt-6-luna": {
+    "Requests": 5,
+    "InputTokens": 65328,
+    "CachedInputTokens": 38420,
+    "CacheWriteTokens": 26893,
+    "OutputTokens": 798,
+    "ReasoningTokens": 0,
+    "ToolCalls": 6
+  }
+}

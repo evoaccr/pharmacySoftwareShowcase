@@ -1,0 +1,24 @@
+<UserControl x:Class="pharmacyApp.Modules.Sales.MoneyEntryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <Grid Width="94" Height="30" HorizontalAlignment="Left">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="58"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="28"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="WholePartBox" MaxLength="12" Padding="6,3" TextAlignment="Right"
+                 VerticalContentAlignment="Center" Text="0" InputMethod.IsInputMethodEnabled="False"
+                 PreviewKeyDown="OnWholePartPreviewKeyDown" PreviewTextInput="OnWholePartPreviewTextInput"
+                 TextChanged="OnPartTextChanged" GotKeyboardFocus="OnPartGotKeyboardFocus"
+                 DataObject.Pasting="OnWholePartPasting"/>
+        <TextBlock Grid.Column="1" Text="," FontWeight="SemiBold" TextAlignment="Center"
+                   VerticalAlignment="Center" Foreground="#4F626D"/>
+        <TextBox x:Name="DecimalPartBox" Grid.Column="2" MaxLength="2" Padding="3"
+                 TextAlignment="Center" VerticalContentAlignment="Center" Text="00"
+                 InputMethod.IsInputMethodEnabled="False" PreviewTextInput="OnDecimalPartPreviewTextInput"
+                 TextChanged="OnPartTextChanged" GotKeyboardFocus="OnPartGotKeyboardFocus"
+                 LostKeyboardFocus="OnDecimalPartLostKeyboardFocus" DataObject.Pasting="OnDecimalPartPasting"/>
+    </Grid>
+</UserControl>

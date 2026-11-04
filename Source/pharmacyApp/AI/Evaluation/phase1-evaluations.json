@@ -1,0 +1,96 @@
+[
+  {
+    "prompt": "8699546012345 barkodlu ürünün güncel bilgilerini göster",
+    "expected_domains": ["product"],
+    "expected_tools": ["product.get"],
+    "risk": "read_only",
+    "clarification_required": false,
+    "model_tier": "simple"
+  },
+  {
+    "prompt": "Bu ürünün geçmiş fiyat değişimlerini göster",
+    "application_context": { "current_module": "products.catalog", "selected_barcode": "8699546012345" },
+    "expected_domains": ["product"],
+    "expected_tools": ["product.get_price_history"],
+    "risk": "read_only",
+    "clarification_required": false,
+    "model_tier": "simple"
+  },
+  {
+    "prompt": "Bu karekodun tüm hareket geçmişini getir",
+    "application_context": { "current_module": "stock-movements.qr", "selected_qr_code": "010869954601234521ABC123" },
+    "expected_domains": ["qr"],
+    "expected_tools": ["qr.get_history"],
+    "risk": "read_only",
+    "clarification_required": false,
+    "model_tier": "simple"
+  },
+  {
+    "prompt": "Son bir haftadaki karekod çıkışlarını ürün bilgileriyle karşılaştır",
+    "expected_domains": ["qr", "product"],
+    "expected_tools": ["qr.search_movements", "product.get"],
+    "risk": "read_only",
+    "clarification_required": false,
+    "model_tier": "normal"
+  },
+  {
+    "prompt": "Bu kodlarla satış tablosunu önizle ve ödeme dağılımını hesapla",
+    "expected_domains": ["sale"],
+    "expected_tools": ["sale.preview_table", "sale.calculate_payment_split"],
+    "risk": "read_only",
+    "clarification_required": true,
+    "model_tier": "normal"
+  },
+  {
+    "prompt": "Medula oturum durumunu kontrol et",
+    "expected_domains": ["medula"],
+    "expected_tools": ["medula.session_status"],
+    "risk": "read_only",
+    "clarification_required": false,
+    "model_tier": "simple"
+  },
+  {
+    "prompt": "Bu hastanın Medula reçetelerini ara",
+    "expected_domains": ["medula"],
+    "expected_tools": ["medula.patient_prescriptions_search"],
+    "risk": "read_only",
+    "clarification_required": true,
+    "model_tier": "simple"
+  },
+  {
+    "prompt": "Bu ürünün resmi geçmiş fiyat arşivini indir",
+    "expected_domains": ["product"],
+    "expected_tools": [],
+    "risk": "read_only",
+    "clarification_required": false,
+    "model_tier": "normal",
+    "expected_outcome": "missing_capability_after_full_catalog_search"
+  },
+  {
+    "prompt": "4 depodan Arveles'in fiyatı ve kampanyası var mı bak",
+    "expected_domains": ["product"],
+    "expected_tools": ["product.search"],
+    "risk": "read_only",
+    "clarification_required": false,
+    "model_tier": "normal",
+    "expected_outcome": "passive_product_found_then_depot_capability_reported_missing"
+  },
+  {
+    "prompt": "Son 3 aydaki satışların hasılatını söyle",
+    "application_context": { "current_module": "products.catalog", "selected_barcode": "8699832750034" },
+    "expected_domains": ["sale"],
+    "expected_tools": ["sale.get_revenue_summary"],
+    "risk": "read_only",
+    "clarification_required": true,
+    "model_tier": "normal"
+  },
+  {
+    "prompt": "Parol'un fiyatı ne",
+    "expected_domains": ["product"],
+    "expected_tools": ["product.search"],
+    "risk": "read_only",
+    "clarification_required": true,
+    "model_tier": "simple",
+    "expected_outcome": "multiple_products_rendered_as_text_choice_buttons"
+  }
+]

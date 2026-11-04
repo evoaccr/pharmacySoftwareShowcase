@@ -1,0 +1,368 @@
+<UserControl x:Class="pharmacyApp.Modules.Takas.TakasListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:takas="clr-namespace:pharmacyApp.Modules.Takas"
+             xmlns:sales="clr-namespace:pharmacyApp.Modules.Sales"
+             Background="#F2F3F4" Loaded="OnLoaded" Unloaded="OnUnloaded">
+    <UserControl.Resources>
+        <Style x:Key="FilterLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#65717E"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="FilterBox" TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="9,5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="PresetButton" TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="Margin" Value="0,0,5,0"/>
+            <Setter Property="Background" Value="#F2EDFF"/>
+            <Setter Property="Foreground" Value="#6D28D9"/>
+            <Setter Property="BorderBrush" Value="#D8CCFA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="TakasGridStyle" TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#C8CDD2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#E8ECEF"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="RowHeight" Value="38"/>
+            <Setter Property="ColumnHeaderHeight" Value="38"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+        </Style>
+        <Style x:Key="TakasRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource SubtleDataGridRowStyle}">
+            <Setter Property="Background" Value="#F4F0FF"/>
+            <Setter Property="Foreground" Value="#27343E"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="in_transit"><Setter Property="Background" Value="#FFF7DB"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="partially_transferred"><Setter Property="Background" Value="#FFF3D2"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="partially_accepted"><Setter Property="Background" Value="#EAF4FF"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="accepted"><Setter Property="Background" Value="#EAF7EE"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="failed"><Setter Property="Background" Value="#FDECEC"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="cancelled"><Setter Property="Background" Value="#F0F2F4"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="partially_cancelled"><Setter Property="Background" Value="#F5F0EC"/></DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="reconciliation_required"><Setter Property="Background" Value="#FBE8F2"/></DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="DetailRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource SubtleDataGridRowStyle}">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="DetailsVisibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsExpanded}" Value="True"><Setter Property="DetailsVisibility" Value="Visible"/></DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="CellText" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="SuggestionListStyle" TargetType="ListBox">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="MaxHeight" Value="145"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
+        <Style x:Key="ArrowButton" TargetType="ToggleButton" BasedOn="{StaticResource SquareToggleButtonStyle}">
+            <Setter Property="Width" Value="27"/><Setter Property="Height" Value="27"/>
+            <Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value><ControlTemplate TargetType="ToggleButton">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Path Data="M0,0 L6,6.5 L0,13" Stroke="#50616B" StrokeThickness="2.2"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                            <Path.Style><Style TargetType="Path"><Setter Property="RenderTransform"><Setter.Value><RotateTransform Angle="0"/></Setter.Value></Setter>
+                                <Style.Triggers><DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                    <Setter Property="RenderTransform"><Setter.Value><RotateTransform Angle="90"/></Setter.Value></Setter>
+                                </DataTrigger></Style.Triggers>
+                            </Style></Path.Style>
+                        </Path>
+                    </Grid>
+                </ControlTemplate></Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+
+        <Border Background="White" BorderBrush="#C8CDD2" BorderThickness="1" CornerRadius="0" Padding="12" Margin="0,0,0,12">
+            <DockPanel LastChildFill="True">
+                <Button x:Name="RefreshButton" DockPanel.Dock="Right" Width="42" Height="32" Margin="12,15,0,8"
+                        VerticalAlignment="Top" Background="#6D28D9" Foreground="White" BorderBrush="#6D28D9"
+                        ToolTip="Refresh" Click="OnRefreshClicked">
+                    <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+                <Button DockPanel.Dock="Right" Width="42" Height="32" Margin="6,15,0,8" VerticalAlignment="Top"
+                        Background="#B42318" Foreground="White" BorderBrush="#B42318"
+                        ToolTip="Clear Filters" Click="OnClearFiltersClicked">
+                    <Viewbox Width="17" Height="17"><Path Data="M2,3 H18 L12,10 V17 L8,19 V10 Z" Fill="White" Stretch="Uniform"/></Viewbox>
+                </Button>
+                <WrapPanel VerticalAlignment="Bottom">
+                    <StackPanel Margin="0,0,12,8">
+                        <TextBlock Text="QR Code" Style="{StaticResource FilterLabel}"/>
+                        <TextBox x:Name="QrFilterBox" Style="{StaticResource FilterBox}" Width="180" TextChanged="OnSimpleFilterChanged"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,12,8">
+                        <TextBlock Text="Barcode, product name or brand" Style="{StaticResource FilterLabel}"/>
+                        <Grid>
+                            <TextBox x:Name="ProductFilterBox" Style="{StaticResource FilterBox}" Width="250" TextChanged="OnProductFilterTextChanged"/>
+                            <Popup x:Name="ProductSuggestionPopup" PlacementTarget="{Binding ElementName=ProductFilterBox}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+                                <Border Width="360" MaxHeight="380" Background="White" BorderBrush="#AEBCC4" BorderThickness="1" CornerRadius="0" Padding="8">
+                                    <StackPanel>
+                                        <TextBlock Text="Medicine Names" Foreground="#65717E" FontSize="11" FontWeight="SemiBold" Margin="5,2,5,3"/>
+                                        <ListBox x:Name="MedicineSuggestionList" Style="{StaticResource SuggestionListStyle}" SelectionChanged="OnProductSuggestionSelected">
+                                            <ListBox.ItemTemplate><DataTemplate DataType="{x:Type sales:SaleProductSuggestion}">
+                                                <TextBlock Text="{Binding DisplayText}" Margin="7,5" TextTrimming="CharacterEllipsis"/>
+                                            </DataTemplate></ListBox.ItemTemplate>
+                                        </ListBox>
+                                        <Separator Margin="4,5"/>
+                                        <TextBlock Text="Brands" Foreground="#65717E" FontSize="11" FontWeight="SemiBold" Margin="5,2,5,3"/>
+                                        <ListBox x:Name="BrandSuggestionList" Style="{StaticResource SuggestionListStyle}" SelectionChanged="OnProductSuggestionSelected">
+                                            <ListBox.ItemTemplate><DataTemplate DataType="{x:Type sales:SaleProductSuggestion}">
+                                                <TextBlock Text="{Binding DisplayText}" Foreground="#18212B" FontWeight="Bold" Margin="7,5" TextTrimming="CharacterEllipsis"/>
+                                            </DataTemplate></ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,12,8">
+                        <TextBlock Text="Pharmacy" Style="{StaticResource FilterLabel}"/>
+                        <Grid>
+                            <TextBox x:Name="PharmacyFilterBox" Style="{StaticResource FilterBox}" Width="225" TextChanged="OnPharmacyFilterTextChanged"/>
+                            <Popup x:Name="PharmacySuggestionPopup" PlacementTarget="{Binding ElementName=PharmacyFilterBox}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+                                <Border Width="390" MaxHeight="265" Background="White" BorderBrush="#AEBCC4" BorderThickness="1" CornerRadius="0" Padding="6">
+                                    <ListBox x:Name="PharmacySuggestionList" Style="{StaticResource SuggestionListStyle}" SelectionChanged="OnPharmacySuggestionSelected">
+                                        <ListBox.ItemTemplate><DataTemplate DataType="{x:Type takas:TakasPharmacySuggestion}">
+                                            <StackPanel Margin="7,5"><TextBlock Text="{Binding DisplayText}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding PharmacistDisplay}" FontSize="11" Foreground="#65717E"/></StackPanel>
+                                        </DataTemplate></ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,12,8">
+                        <TextBlock Text="Quick Date" Style="{StaticResource FilterLabel}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Today" Tag="Day" Style="{StaticResource PresetButton}" Click="OnPeriodPresetClicked"/>
+                            <Button Content="This Week" Tag="Week" Style="{StaticResource PresetButton}" Click="OnPeriodPresetClicked"/>
+                            <Button Content="This Month" Tag="Month" Style="{StaticResource PresetButton}" Click="OnPeriodPresetClicked"/>
+                            <Button Content="This Year" Tag="Year" Style="{StaticResource PresetButton}" Click="OnPeriodPresetClicked"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,8,8"><TextBlock Text="Start" Style="{StaticResource FilterLabel}"/>
+                        <DatePicker x:Name="StartDatePicker" Width="130" Height="32" SelectedDateChanged="OnDateChanged"/></StackPanel>
+                    <StackPanel Margin="0,0,12,8"><TextBlock Text="End" Style="{StaticResource FilterLabel}"/>
+                        <DatePicker x:Name="EndDatePicker" Width="130" Height="32" SelectedDateChanged="OnDateChanged"/></StackPanel>
+                    <StackPanel Margin="0,0,12,8"><TextBlock Text="User" Style="{StaticResource FilterLabel}"/>
+                        <ComboBox x:Name="UserFilter" Width="175" Height="32" DisplayMemberPath="DisplayText" SelectionChanged="OnComboFilterChanged"/></StackPanel>
+                    <StackPanel Margin="0,0,12,8"><TextBlock Text="Direction" Style="{StaticResource FilterLabel}"/>
+                        <ComboBox x:Name="DirectionFilter" Width="115" Height="32" SelectedIndex="0" SelectionChanged="OnComboFilterChanged">
+                            <ComboBoxItem Content="All" Tag=""/><ComboBoxItem Content="Outgoing" Tag="outgoing"/><ComboBoxItem Content="Incoming" Tag="incoming"/>
+                        </ComboBox></StackPanel>
+                    <StackPanel Margin="0,0,12,8"><TextBlock Text="Status" Style="{StaticResource FilterLabel}"/>
+                        <Button x:Name="StatusFilterButton" Width="150" Height="32" Content="All" HorizontalContentAlignment="Left" Padding="9,4" Click="OnStatusFilterClicked"/>
+                        <Popup x:Name="StatusFilterPopup" PlacementTarget="{Binding ElementName=StatusFilterButton}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+                            <Border Width="255" Margin="0,4,0,0" Padding="10" Background="White" BorderBrush="#AEBCC4" BorderThickness="1" CornerRadius="0">
+                                <StackPanel>
+                                    <CheckBox x:Name="PendingStatusCheckBox" Content="Notification Pending" Margin="4" Tag="PendingTransfer" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <CheckBox x:Name="TransitStatusCheckBox" Content="In Transit" Margin="4" Tag="InTransit" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <CheckBox x:Name="PartTransferredStatusCheckBox" Content="Partially in Transit" Margin="4" Tag="PartiallyTransferred" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <CheckBox x:Name="PartAcceptedStatusCheckBox" Content="Partially Accepted" Margin="4" Tag="PartiallyAccepted" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <CheckBox x:Name="AcceptedStatusCheckBox" Content="Accepted" Margin="4" Tag="Accepted" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <CheckBox x:Name="PartCancelledStatusCheckBox" Content="Partially Cancelled" Margin="4" Tag="PartiallyCancelled" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <CheckBox x:Name="CancelledStatusCheckBox" Content="Cancelled" Margin="4" Tag="Cancelled" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <CheckBox x:Name="FailedStatusCheckBox" Content="Sending Failed" Margin="4" Tag="Failed" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <CheckBox x:Name="ReconciliationStatusCheckBox" Content="Technical Review Required" Margin="4" Tag="ReconciliationRequired" Checked="OnStatusChanged" Unchecked="OnStatusChanged"/>
+                                    <Separator Margin="2,7"/>
+                                    <UniformGrid Columns="2"><Button Content="Select All" Margin="0,0,4,0" Padding="5,4" Click="OnSelectAllStatusesClicked"/>
+                                        <Button Content="Clear Selection" Margin="4,0,0,0" Padding="5,4" Click="OnDeselectAllStatusesClicked"/></UniformGrid>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,8,8"><TextBlock Text="Minimum debt" Style="{StaticResource FilterLabel}"/>
+                        <TextBox x:Name="MinimumDebtBox" Style="{StaticResource FilterBox}" Width="90" TextChanged="OnSimpleFilterChanged"/></StackPanel>
+                    <StackPanel Margin="0,0,0,8"><TextBlock Text="Maximum debt" Style="{StaticResource FilterLabel}"/>
+                        <TextBox x:Name="MaximumDebtBox" Style="{StaticResource FilterBox}" Width="90" TextChanged="OnSimpleFilterChanged"/></StackPanel>
+                </WrapPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <DataGrid x:Name="TakasGrid" Visibility="Collapsed" Style="{StaticResource TakasGridStyle}" RowStyle="{StaticResource TakasRowStyle}"
+                      SelectionChanged="OnTakasSelectionChanged"
+                      PreviewMouseRightButtonDown="OnTakasGridRightClick"
+                      ContextMenuOpening="OnTakasGridContextMenuOpening">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Cancel" Click="OnCancelTakasClicked"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Trade No." Binding="{Binding TakasId}" Width="80"/>
+                    <DataGridTextColumn Header="Medicine Quantity" Binding="{Binding MedicineQuantity}" Width="95"/>
+                    <DataGridTextColumn Header="Pharmacy Name" Binding="{Binding PharmacyDisplay}" Width="*" MinWidth="170"/>
+                    <DataGridTextColumn Header="Pharmacist" Binding="{Binding PharmacistDisplay}" Width="130"/>
+                    <DataGridTextColumn Header="GLN" Binding="{Binding CounterpartyGln}" Width="125"/>
+                    <DataGridTextColumn Header="Direction" Binding="{Binding DirectionDisplay}" Width="70"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding StatusDisplay}" Width="145"/>
+                    <DataGridTextColumn Header="Debt" Binding="{Binding DebtDisplay}" Width="105"/>
+                    <DataGridTextColumn Header="ITS Notification No." Binding="{Binding NotificationDisplay}" Width="130"/>
+                    <DataGridTextColumn Header="Note" Binding="{Binding NotesDisplay}" Width="150">
+                        <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}"><Setter Property="ToolTip" Value="{Binding NotesDisplay}"/></Style></DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="User" Binding="{Binding UserDisplay}" Width="110"/>
+                    <DataGridTextColumn Header="Date + Time" Binding="{Binding CreatedAtDisplay}" Width="145"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Grid x:Name="SplitTakasHost">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <TextBlock Text="Incoming Trades" Foreground="#17613D" FontSize="14" FontWeight="SemiBold"
+                               Margin="2,0,0,7" VerticalAlignment="Center"/>
+                    <DataGrid x:Name="IncomingTakasGrid" Grid.Row="1" Style="{StaticResource TakasGridStyle}"
+                              RowStyle="{StaticResource TakasRowStyle}" SelectionChanged="OnTakasSelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Trade No." Binding="{Binding TakasId}" Width="75"/>
+                            <DataGridTextColumn Header="Medicine Quantity" Binding="{Binding MedicineQuantity}" Width="90"/>
+                            <DataGridTextColumn Header="Pharmacy Name" Binding="{Binding PharmacyDisplay}" Width="*" MinWidth="155"/>
+                            <DataGridTextColumn Header="Pharmacist" Binding="{Binding PharmacistDisplay}" Width="120"/>
+                            <DataGridTextColumn Header="GLN" Binding="{Binding CounterpartyGln}" Width="125"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding StatusDisplay}" Width="140"/>
+                            <DataGridTextColumn Header="Debt" Binding="{Binding DebtDisplay}" Width="105"/>
+                            <DataGridTextColumn Header="ITS Notification No." Binding="{Binding NotificationDisplay}" Width="130"/>
+                            <DataGridTextColumn Header="Note" Binding="{Binding NotesDisplay}" Width="145">
+                                <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}"><Setter Property="ToolTip" Value="{Binding NotesDisplay}"/></Style></DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="User" Binding="{Binding UserDisplay}" Width="105"/>
+                            <DataGridTextColumn Header="Date + Time" Binding="{Binding CreatedAtDisplay}" Width="145"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <TextBlock x:Name="IncomingCountText" Grid.Row="2" Text="Total incoming trades: 0"
+                               Foreground="#53616B" Margin="2,7,0,0" VerticalAlignment="Center"/>
+                </Grid>
+
+                <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Stretch" Background="#C8CDD2"/>
+
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <TextBlock Text="Outgoing Trades" Foreground="#8D2E2E" FontSize="14" FontWeight="SemiBold"
+                               Margin="2,0,0,7" VerticalAlignment="Center"/>
+                    <DataGrid x:Name="OutgoingTakasGrid" Grid.Row="1" Style="{StaticResource TakasGridStyle}"
+                              RowStyle="{StaticResource TakasRowStyle}" SelectionChanged="OnTakasSelectionChanged"
+                              PreviewMouseRightButtonDown="OnTakasGridRightClick"
+                              ContextMenuOpening="OnTakasGridContextMenuOpening">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Cancel" Click="OnCancelTakasClicked"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Trade No." Binding="{Binding TakasId}" Width="75"/>
+                            <DataGridTextColumn Header="Medicine Quantity" Binding="{Binding MedicineQuantity}" Width="90"/>
+                            <DataGridTextColumn Header="Pharmacy Name" Binding="{Binding PharmacyDisplay}" Width="*" MinWidth="155"/>
+                            <DataGridTextColumn Header="Pharmacist" Binding="{Binding PharmacistDisplay}" Width="120"/>
+                            <DataGridTextColumn Header="GLN" Binding="{Binding CounterpartyGln}" Width="125"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding StatusDisplay}" Width="140"/>
+                            <DataGridTextColumn Header="Debt" Binding="{Binding DebtDisplay}" Width="105"/>
+                            <DataGridTextColumn Header="ITS Notification No." Binding="{Binding NotificationDisplay}" Width="130"/>
+                            <DataGridTextColumn Header="Note" Binding="{Binding NotesDisplay}" Width="145">
+                                <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock" BasedOn="{StaticResource CellText}"><Setter Property="ToolTip" Value="{Binding NotesDisplay}"/></Style></DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="User" Binding="{Binding UserDisplay}" Width="105"/>
+                            <DataGridTextColumn Header="Date + Time" Binding="{Binding CreatedAtDisplay}" Width="145"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <TextBlock x:Name="OutgoingCountText" Grid.Row="2" Text="Total outgoing trades: 0"
+                               Foreground="#53616B" Margin="2,7,0,0" VerticalAlignment="Center"/>
+                </Grid>
+            </Grid>
+
+            <Border x:Name="DetailPanel" Grid.Row="1" Height="285" Margin="0,12,0,0" Visibility="Collapsed"
+                    Background="White" BorderBrush="#C8CDD2" BorderThickness="1" CornerRadius="0" Padding="10">
+                <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <TextBlock x:Name="DetailTitle" Text="Trade Contents" Foreground="#27343E" FontSize="14" FontWeight="SemiBold" Margin="2,0,0,8"/>
+                    <DataGrid x:Name="TakasDetailGrid" Grid.Row="1" Style="{StaticResource TakasGridStyle}" RowStyle="{StaticResource DetailRowStyle}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Product Name" Width="*" MinWidth="250">
+                                <DataGridTemplateColumn.CellTemplate><DataTemplate DataType="{x:Type takas:TakasListProductGroup}">
+                                    <DockPanel LastChildFill="True"><ToggleButton Style="{StaticResource ArrowButton}" DockPanel.Dock="Left" Margin="0,0,7,0"
+                                        IsChecked="{Binding IsExpanded, Mode=TwoWay}" Click="OnProductExpandClicked"/>
+                                        <TextBlock Text="{Binding ProductName}" VerticalAlignment="Center" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/></DockPanel>
+                                </DataTemplate></DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Stock" Binding="{Binding StockDisplay}" Width="75"/>
+                            <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="125"/>
+                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="70"/>
+                            <DataGridTextColumn Header="Unit Cost" Binding="{Binding UnitCostDisplay}" Width="115"/>
+                            <DataGridTextColumn Header="Unit Debt" Binding="{Binding UnitDebtDisplay}" Width="110"/>
+                            <DataGridTextColumn Header="Total Debt" Binding="{Binding TotalDebtDisplay}" Width="120"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding StatusDisplay}" Width="145"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowDetailsTemplate><DataTemplate DataType="{x:Type takas:TakasListProductGroup}">
+                            <ItemsControl ItemsSource="{Binding QrCodes}" Margin="37,0,0,4">
+                                <ItemsControl.ItemTemplate><DataTemplate DataType="{x:Type takas:TakasListQrEntry}">
+                                    <Border Background="#F7F5FC" BorderBrush="#E6E0F2" BorderThickness="0,1,0,0" Padding="12,8">
+                                        <Border.ContextMenu><ContextMenu><MenuItem Header="View Movements" Click="OnOpenQrMovementsClicked"/>
+                                            <MenuItem Header="Copy code" Click="OnCopyQrClicked"/></ContextMenu></Border.ContextMenu>
+                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="75"/><ColumnDefinition Width="125"/><ColumnDefinition Width="70"/><ColumnDefinition Width="115"/><ColumnDefinition Width="110"/><ColumnDefinition Width="120"/><ColumnDefinition Width="145"/></Grid.ColumnDefinitions>
+                                            <StackPanel><DockPanel><TextBlock Text="{Binding ExpiryDateDisplay}" DockPanel.Dock="Right" Margin="12,0,8,0" Foreground="#6B7B84"/>
+                                                <TextBlock FontFamily="Consolas" Foreground="#52636D" TextTrimming="CharacterEllipsis"><Run Text="{Binding CodeTypeDisplay}"/><Run Text=": "/><Run Text="{Binding QrCode}"/></TextBlock></DockPanel>
+                                                <TextBlock Text="{Binding TraceDisplay}" FontSize="10" Foreground="#7A8790"/></StackPanel>
+                                            <TextBlock Grid.Column="4" Text="{Binding EntryCostDisplay}" Foreground="#53656F" Padding="10,0"/>
+                                            <TextBlock Grid.Column="5" Text="{Binding DebtDisplay}" Foreground="#53656F" Padding="10,0"/>
+                                            <TextBlock Grid.Column="7" Text="{Binding StatusDisplay}" Foreground="#53656F" Padding="10,0" ToolTip="{Binding ErrorDisplay}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate></ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate></DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <Border x:Name="LoadingOverlay" Grid.RowSpan="2" Background="#DFFFFFFF" Visibility="Collapsed">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="310">
+                    <TextBlock x:Name="LoadingText" Text="Loading trades..." TextAlignment="Center" Foreground="#53636D" Margin="0,0,0,10"/>
+                    <ProgressBar Height="7" IsIndeterminate="True"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="2,9,2,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBlock x:Name="CountText" Foreground="#53636D" Text="Total records: 0" VerticalAlignment="Center"/>
+            <CheckBox x:Name="SplitDirectionToggle" Grid.Column="1" Content="Separate Incoming / Outgoing" IsChecked="True"
+                      Foreground="#33434E" VerticalContentAlignment="Center" VerticalAlignment="Center"
+                      Checked="OnSplitDirectionChanged" Unchecked="OnSplitDirectionChanged"/>
+        </Grid>
+    </Grid>
+</UserControl>

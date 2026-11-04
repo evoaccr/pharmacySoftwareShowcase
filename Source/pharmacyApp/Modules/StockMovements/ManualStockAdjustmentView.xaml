@@ -1,0 +1,366 @@
+<UserControl x:Class="pharmacyApp.Modules.StockMovements.ManualStockAdjustmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="OnLoaded"
+             Unloaded="OnUnloaded"
+             Background="#F4F7F8">
+    <UserControl.Resources>
+        <Style x:Key="InputBox" TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="11,7"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#CBD7DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="EntryButton" TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+            <Setter Property="Width" Value="38"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+            <Setter Property="Background" Value="#315A73"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" CornerRadius="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#294C62"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#115E59"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.48"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ArrowToggle" TargetType="ToggleButton" BasedOn="{StaticResource SquareToggleButtonStyle}">
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="4,0,7,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="ArrowSurface" Background="Transparent" CornerRadius="0">
+                            <Path x:Name="Arrow" Data="M0,0 L6,6.5 L0,13" Stroke="#4F626D"
+                                  StrokeThickness="2.2" StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  RenderTransformOrigin="0.5,0.5">
+                                <Path.RenderTransform><RotateTransform Angle="0"/></Path.RenderTransform>
+                            </Path>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ArrowSurface" Property="Background" Value="#E7F1F1"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Arrow" Property="RenderTransform">
+                                    <Setter.Value><RotateTransform Angle="90"/></Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DirectionSwitch" TargetType="ToggleButton" BasedOn="{StaticResource SquareToggleButtonStyle}">
+            <Setter Property="Width" Value="210"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="#EEF2F3" BorderBrush="#CFDADD" BorderThickness="1" CornerRadius="0" Padding="3">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Border x:Name="Selection" Grid.Column="0" Background="#B33A32" CornerRadius="0"/>
+                                <TextBlock x:Name="ExitLabel" Grid.Column="0" Text="Issue" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" Foreground="White"/>
+                                <TextBlock x:Name="EntryLabel" Grid.Column="1" Text="Entry" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#65717E"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Selection" Property="Grid.Column" Value="1"/>
+                                <Setter TargetName="Selection" Property="Background" Value="#168B52"/>
+                                <Setter TargetName="ExitLabel" Property="Foreground" Value="#65717E"/>
+                                <Setter TargetName="EntryLabel" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="MinWidth" Value="220"/>
+            <Setter Property="Padding" Value="22,0"/>
+            <Setter Property="Background" Value="#168B52"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Surface" Background="{TemplateBinding Background}" CornerRadius="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.90"/></Trigger>
+                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.78"/></Trigger>
+                            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Background" Value="#9BA8AE"/></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="22"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="QrCodeBox" Style="{StaticResource InputBox}"
+                     ToolTip="Scan or enter the QR code"
+                     KeyDown="OnQrCodeKeyDown"/>
+            <Button x:Name="AddQrButton" Grid.Column="1" Style="{StaticResource EntryButton}"
+                    Content="+" ToolTip="Add QR code to list" Click="OnAddClicked"/>
+
+            <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                <Border Padding="9,5" Background="#E8F2F2" CornerRadius="0" Margin="0,0,8,0">
+                    <TextBlock x:Name="ProductCountText" Text="0 Medicine" Foreground="#365B61" FontWeight="SemiBold"/>
+                </Border>
+                <Border Padding="9,5" Background="#E8F2F2" CornerRadius="0">
+                    <TextBlock x:Name="QrCountText" Text="0 QR Code" Foreground="#365B61" FontWeight="SemiBold"/>
+                </Border>
+            </StackPanel>
+
+            <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Operation direction" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="#71808A"/>
+                <Border x:Name="DirectionBadge" Padding="11,6" Background="#FBE8E6" CornerRadius="0">
+                    <TextBlock x:Name="DirectionBadgeText" Text="Issue" Foreground="#A43731" FontWeight="SemiBold"/>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,8">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBlock x:Name="StatusText" MinHeight="18" Foreground="#B33A32" FontSize="13"
+                       TextWrapping="Wrap" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="ITS:" Foreground="#849199" Margin="0,0,8,0"/>
+                <TextBlock Text="×" Foreground="#B33A32" FontWeight="Bold"/>
+                <TextBlock Text="Not registered" Foreground="#71808A" Margin="2,0,12,0"/>
+                <TextBlock Text="→" Foreground="#A46D10" FontWeight="Bold"/>
+                <TextBlock Text="Goods Receipt" Foreground="#71808A" Margin="2,0,12,0"/>
+                <TextBlock Text="✓" Foreground="#167D4E" FontWeight="Bold"/>
+                <TextBlock Text="Registered" Foreground="#71808A" Margin="2,0,0,0"/>
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="2" Background="White" BorderBrush="#D5E0E3" BorderThickness="1" CornerRadius="0">
+            <Grid>
+                <DataGrid x:Name="RowsGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                          CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column"
+                          RowHeaderWidth="0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E4EAEC"
+                          BorderThickness="0" Background="White" SelectionMode="Single" SelectionUnit="FullRow"
+                          RowHeight="44" ColumnHeaderHeight="38">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource SubtleDataGridRowStyle}">
+                            <Setter Property="DetailsVisibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                    <Setter Property="DetailsVisibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Medicine Name" Width="*" MinWidth="330">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <ToggleButton DockPanel.Dock="Left" Style="{StaticResource ArrowToggle}"
+                                                      IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                                      ToolTip="Show or hide QR codes"/>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding ProductName}" FontWeight="SemiBold" Foreground="#273740"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding BarcodeDisplay}" FontSize="11" Foreground="#849199"/>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding Amount}" Width="80"/>
+                        <DataGridTemplateColumn Header="ITS Status" Width="250">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ItsSummary}" Foreground="#71808A" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Stock Status" Width="175">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding StockSummary}" Foreground="#71808A" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="78">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Remove" Tag="{Binding}" Padding="8,4" Foreground="#A43731"
+                                            Background="Transparent" BorderBrush="#E6C8C5" Click="OnRemoveGroupClicked"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Items}" Margin="39,0,0,5">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border MinHeight="43" BorderBrush="#E5EBED" BorderThickness="0,0,0,1"
+                                                Background="#FAFCFC" Padding="8,3">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" MinWidth="291"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="250"/>
+                                                    <ColumnDefinition Width="175"/>
+                                                    <ColumnDefinition Width="78"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding QrCode}" FontFamily="Consolas" FontSize="12"
+                                                               Foreground="#425761" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="QR Code" FontSize="10" Foreground="#94A0A6"/>
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="1" Text="1" VerticalAlignment="Center" Padding="10,0" Foreground="#52646D"/>
+
+                                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <Border Width="24" Height="24" CornerRadius="0" Background="{Binding ItsBackground}" Margin="0,0,8,0">
+                                                        <TextBlock Text="{Binding ItsIcon}" Foreground="{Binding ItsBrush}" FontSize="16"
+                                                                   FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <TextBlock Text="{Binding ItsStatusText}" Foreground="{Binding ItsBrush}"
+                                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                                               ToolTip="{Binding ItsDetail}"/>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <Border Width="24" Height="24" CornerRadius="0" Background="{Binding StockBackground}" Margin="0,0,8,0">
+                                                        <TextBlock Text="{Binding StockIcon}" Foreground="{Binding StockBrush}" FontSize="15"
+                                                                   FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <TextBlock Text="{Binding StockStatusText}" Foreground="{Binding StockBrush}"
+                                                               VerticalAlignment="Center"/>
+                                                </StackPanel>
+
+                                                <Button Grid.Column="4" Content="Remove" Tag="{Binding}" Padding="8,4"
+                                                        Foreground="#A43731" Background="Transparent" BorderBrush="#E6C8C5"
+                                                        Click="OnRemoveClicked"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
+
+                <StackPanel x:Name="EmptyStatePanel" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            IsHitTestVisible="False">
+                    <Border Width="54" Height="54" Background="#E8F2F2" CornerRadius="0" HorizontalAlignment="Center">
+                        <TextBlock Text="▦" FontSize="27" Foreground="#55777B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="No QR codes added" Margin="0,12,0,4" FontSize="16" FontWeight="SemiBold"
+                               Foreground="#52646D" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Scan product boxes in the field above." Foreground="#849199"/>
+                </StackPanel>
+
+                <Border x:Name="BusyOverlay" Background="#EFFFFFFF" Visibility="Collapsed">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="270">
+                        <ProgressBar Height="5" IsIndeterminate="True" Foreground="#315A73"/>
+                        <TextBlock x:Name="BusyText" Text="Querying QR code..." Margin="0,12,0,0"
+                                   HorizontalAlignment="Center" Foreground="#52646D"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="3" Margin="0,14,0,0" Padding="14,12" Background="White"
+                BorderBrush="#D5E0E3" BorderThickness="1" CornerRadius="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="22"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="Note" FontSize="11" Foreground="#65717E" Margin="2,0,0,4"/>
+                    <TextBox x:Name="NoteBox" Height="56" MaxLength="500" Padding="9,6"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                             BorderBrush="#CBD7DB" BorderThickness="1" Background="White"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <TextBlock Text="Operation" FontSize="11" Foreground="#65717E" Margin="2,0,0,5"/>
+                    <ToggleButton x:Name="DirectionToggle" Style="{StaticResource DirectionSwitch}"
+                                  IsChecked="False" Checked="OnDirectionChanged" Unchecked="OnDirectionChanged"
+                                  ToolTip="Choose manual stock receipt or issue"/>
+                    <CheckBox x:Name="SendItsCheckBox" Content="Send ITS Notification" IsChecked="True"
+                              Margin="3,9,0,0" Foreground="#33464F" Checked="OnItsOptionChanged" Unchecked="OnItsOptionChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                    <TextBlock x:Name="SaveSummaryText" Text="No QR codes to save" Margin="0,0,0,7"
+                               HorizontalAlignment="Center" Foreground="#71808A"/>
+                    <Button x:Name="SaveButton" Style="{StaticResource PrimaryButton}" Content="Save Issue"
+                            IsEnabled="False" Click="OnSaveClicked"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

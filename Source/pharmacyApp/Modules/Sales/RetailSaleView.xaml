@@ -1,0 +1,471 @@
+<UserControl x:Class="pharmacyApp.Modules.Sales.RetailSaleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sales="clr-namespace:pharmacyApp.Modules.Sales"
+             Loaded="OnLoaded"
+             Unloaded="OnUnloaded">
+    <UserControl.Resources>
+        <Style x:Key="EntryButton" TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+            <Setter Property="Width" Value="38"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+            <Setter Property="Background" Value="#315A73"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" CornerRadius="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Border" Property="Background" Value="#294C62"/></Trigger>
+                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Border" Property="Background" Value="#115E59"/></Trigger>
+                            <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.48"/></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="InputBox" TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="11,7"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#CBD7DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="SummaryLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#71808A"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style x:Key="SummaryValue" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#263640"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,2,0,14"/>
+        </Style>
+        <Style x:Key="PaymentCardTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#65717E"/>
+            <Setter Property="Margin" Value="2,0,0,5"/>
+        </Style>
+        <Style x:Key="PaymentCardToggle" TargetType="ToggleButton" BasedOn="{StaticResource SquareToggleButtonStyle}">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="CardBorder" Background="#F9FBFB" BorderBrush="#C8CDD2" BorderThickness="1"
+                                CornerRadius="0" MinWidth="150" MinHeight="46"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CardBorder" Property="BorderBrush" Value="#9FC3C0"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CardBorder" Property="Background" Value="#F0F2F4"/>
+                                <Setter TargetName="CardBorder" Property="BorderBrush" Value="#315A73"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="CardBorder" Property="Opacity" Value="0.55"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="270"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="QrCodeInput" Style="{StaticResource InputBox}"
+                     ToolTip="QR code or barcode"
+                     KeyDown="OnQrCodeKeyDown"/>
+            <Button x:Name="AddItemButton" Grid.Column="1" Style="{StaticResource EntryButton}" Content="+"
+                    ToolTip="Add product to sale" Click="OnAddItemClicked"/>
+
+            <Grid Grid.Column="3">
+                <TextBox x:Name="PatientSearchBox" Style="{StaticResource InputBox}"
+                         ToolTip="Patient name, surname or national ID"
+                         TextChanged="OnPatientSearchTextChanged"
+                         GotKeyboardFocus="OnPatientSearchFocused"
+                         PreviewKeyDown="OnPatientSearchKeyDown"/>
+                <TextBlock x:Name="PatientPlaceholder" Text="Select a patient (at least 3 characters)"
+                           Margin="12,0" VerticalAlignment="Center" Foreground="#8A98A1"
+                           IsHitTestVisible="False"/>
+                <Popup x:Name="PatientSuggestionPopup" Placement="Bottom"
+                       PlacementTarget="{Binding ElementName=PatientSearchBox}"
+                       StaysOpen="False" AllowsTransparency="True">
+                    <Border Width="340" MaxHeight="280" Margin="0,4,0,0" Padding="4"
+                            Background="White" BorderBrush="#CAD7DB" BorderThickness="1" CornerRadius="0">
+                        <ListBox x:Name="PatientSuggestionList" BorderThickness="0"
+                                 SelectionChanged="OnPatientSuggestionSelected"
+                                 PreviewKeyDown="OnPatientSuggestionKeyDown">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type sales:PatientSuggestion}">
+                                    <TextBlock Text="{Binding DisplayText}" Padding="8,7" Foreground="#263640"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                </Popup>
+            </Grid>
+            <Button x:Name="AddPatientButton" Grid.Column="4" Style="{StaticResource EntryButton}" Content="+"
+                    ToolTip="Add new patient" Click="OnAddPatientClicked"/>
+        </Grid>
+
+        <TextBlock x:Name="StatusText" Grid.Row="1" Margin="0,8,0,8" MinHeight="18"
+                   Foreground="#B33A32" FontSize="13" TextWrapping="Wrap"/>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="560"/>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="260"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Background="White" BorderBrush="#D5E0E3" BorderThickness="1" CornerRadius="0" ClipToBounds="True">
+                <DataGrid x:Name="SaleGrid" AutoGenerateColumns="False" CanUserAddRows="False"
+                          CanUserDeleteRows="False" CanUserSortColumns="False" IsReadOnly="True"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E7EDEF" BorderThickness="0"
+                          SelectionMode="Single" SelectionUnit="FullRow"
+                          RowHeight="44" ColumnHeaderHeight="38"
+                          PreviewMouseRightButtonDown="OnSaleGridRightClick"
+                          ContextMenuOpening="OnSaleGridContextMenuOpening"
+                          SelectionChanged="OnSaleGroupSelected">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove Medicine" Click="OnRemoveGroupClicked"/>
+                            <MenuItem Header="Open medicine information" Click="OnOpenGroupProductClicked"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource SubtleDataGridRowStyle}">
+                            <Setter Property="DetailsVisibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                    <Setter Property="DetailsVisibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Product Name" Width="*" MinWidth="260">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <ToggleButton DockPanel.Dock="Left" Width="28" Height="28" Margin="4,0,7,0"
+                                                      IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                                      Click="OnSaleGroupExpandClicked"
+                                                      Background="Transparent" BorderThickness="0" ToolTip="Show QR codes">
+                                            <Path Data="M0,0 L6,6.5 L0,13" Stroke="#4F626D" StrokeThickness="2.2"
+                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                                <Path.Style>
+                                                    <Style TargetType="Path">
+                                                        <Setter Property="RenderTransform"><Setter.Value><RotateTransform Angle="0"/></Setter.Value></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                                <Setter Property="RenderTransform"><Setter.Value><RotateTransform Angle="90"/></Setter.Value></Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Path.Style>
+                                            </Path>
+                                        </ToggleButton>
+                                        <TextBlock Text="{Binding ProductName}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#273740" TextTrimming="CharacterEllipsis"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Stock" Binding="{Binding StockDisplay}" Width="75"/>
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="70"/>
+                        <DataGridTextColumn Header="Unit Cost" Binding="{Binding UnitCostDisplay}" Width="115"/>
+                        <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPriceDisplay}" Width="115"/>
+                        <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPriceDisplay}" Width="125"/>
+                        <DataGridTemplateColumn x:Name="DiscountColumn" Header="Discount" Width="105" Visibility="Collapsed">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding TotalDiscountDisplay}" VerticalAlignment="Center" Padding="10,0">
+                                            <TextBlock.Style><Style TargetType="TextBlock">
+                                                <Style.Triggers><DataTrigger Binding="{Binding IsDiscountEditable}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers>
+                                            </Style></TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBox Text="{Binding EditableDiscountAmount, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=N2}"
+                                                 Padding="5,3" Margin="4" LostKeyboardFocus="OnDiscountCellLostFocus">
+                                            <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}"><Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers><DataTrigger Binding="{Binding IsDiscountEditable}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+                                            </Style></TextBox.Style>
+                                        </TextBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Entries}" Margin="37,0,0,4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type sales:RetailSaleEntry}">
+                                        <Border Background="#F4F8F9" BorderBrush="#E0E9EB" BorderThickness="0,1,0,0"
+                                                Padding="12,8" MouseLeftButtonDown="OnSaleEntrySelected">
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Remove QR Code" Click="OnRemoveEntryClicked"/>
+                                                    <MenuItem Header="Open medicine information" Click="OnOpenEntryProductClicked"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="View Movements" Click="OnOpenEntryMovementsClicked"/>
+                                                    <MenuItem Header="Copy QR Code" Click="OnCopyEntryQrClicked"/>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="75"/>
+                                                    <ColumnDefinition Width="70"/>
+                                                    <ColumnDefinition Width="115"/>
+                                                    <ColumnDefinition Width="115"/>
+                                                    <ColumnDefinition Width="125"/>
+                                                    <ColumnDefinition Width="105"/>
+                                                </Grid.ColumnDefinitions>
+                                                <DockPanel LastChildFill="True">
+                                                    <TextBlock Text="{Binding ExpiryDateDisplay}" DockPanel.Dock="Right" Margin="12,0,8,0"
+                                                               Foreground="#6B7B84" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Code}" Foreground="#53656F" FontFamily="Consolas"
+                                                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                                </DockPanel>
+                                                 <TextBlock Grid.Column="3" Text="{Binding EntryCostDisplay}" Foreground="#53656F"
+                                                            VerticalAlignment="Center" Padding="10,0"/>
+                                                <Grid Grid.Column="6">
+                                                    <TextBlock Text="{Binding DiscountDisplay}" Foreground="#53656F" VerticalAlignment="Center" Padding="10,0">
+                                                        <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsDiscountEditable}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+                                                        </Style.Triggers></Style></TextBlock.Style>
+                                                    </TextBlock>
+                                                    <TextBox Text="{Binding DiscountAmount, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=N2}"
+                                                             Padding="5,3" Margin="4" LostKeyboardFocus="OnDiscountCellLostFocus">
+                                                        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource SquareTextBoxStyle}"><Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers><DataTrigger Binding="{Binding IsDiscountEditable}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+                                                        </Style></TextBox.Style>
+                                                    </TextBox>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
+            </Border>
+
+            <Border Grid.Column="2" Background="White" BorderBrush="#D5E0E3" BorderThickness="1"
+                    CornerRadius="0" Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <TextBlock Text="Customer Summary" FontSize="17" FontWeight="SemiBold" Foreground="#263640"/>
+                    <TextBlock x:Name="CustomerName" Grid.Row="1" Text="No Patient Selected" FontSize="16" FontWeight="SemiBold"
+                               Foreground="#263640" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"><StackPanel>
+                        <TextBlock Text="National ID" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="CustomerTc" Text="—" Style="{StaticResource SummaryValue}"/>
+                        <TextBlock Text="Phone" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="CustomerPhone" Text="—" Style="{StaticResource SummaryValue}"/>
+                        <TextBlock Text="Debt Amount" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="CustomerDebt" Text="—" Style="{StaticResource SummaryValue}"/>
+                        <TextBlock Text="Debt Credit" Style="{StaticResource SummaryLabel}"/>
+                        <TextBlock x:Name="CustomerCredit" Text="—" Style="{StaticResource SummaryValue}"/>
+                    </StackPanel></ScrollViewer>
+                    <Button x:Name="EditPatientButton" Grid.Row="3" Height="38" Content="View / Edit Patient"
+                            Background="#E0F2F0" Foreground="#294C62" BorderBrush="#9DD9D2" BorderThickness="1"
+                            FontWeight="SemiBold" IsEnabled="False" Click="OnEditPatientClicked"/>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="4" Background="White" BorderBrush="#D5E0E3" BorderThickness="1"
+                    CornerRadius="0" Padding="18">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="190"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Product Summary" FontSize="17" FontWeight="SemiBold" Foreground="#263640"/>
+                    <Border Grid.Row="1" Margin="0,14,0,14" Background="#F3F6F7" CornerRadius="0">
+                        <Grid>
+                            <Image x:Name="SummaryPhoto" Stretch="Uniform" Margin="10"/>
+                            <TextBlock x:Name="NoPhotoText" Text="No Medicine Selected" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#89959C"/>
+                        </Grid>
+                    </Border>
+                    <TextBlock x:Name="SummaryProductName" Grid.Row="2" Text="Select a product"
+                               FontSize="16" FontWeight="SemiBold" Foreground="#263640" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                    <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Current Wholesale Purchase Price" Style="{StaticResource SummaryLabel}"/>
+                            <TextBlock x:Name="SummaryWarehousePrice" Text="—" Style="{StaticResource SummaryValue}"/>
+                            <TextBlock Text="Public Price" Style="{StaticResource SummaryLabel}"/>
+                            <TextBlock x:Name="SummaryPublicPrice" Text="—" Style="{StaticResource SummaryValue}"/>
+                            <TextBlock Text="Prescription Color" Style="{StaticResource SummaryLabel}"/>
+                            <TextBlock x:Name="SummaryPrescriptionColor" Text="—" Style="{StaticResource SummaryValue}"/>
+                            <TextBlock Text="Stock" Style="{StaticResource SummaryLabel}"/>
+                            <TextBlock x:Name="SummaryStock" Text="—" Style="{StaticResource SummaryValue}"/>
+                            <Expander Header="Indication" Foreground="#71808A" FontSize="12" Margin="0,0,0,10">
+                                <TextBlock x:Name="SummaryIndication" Text="—" Foreground="#263640"
+                                           FontSize="13" Margin="10,6,4,2" TextWrapping="Wrap"/>
+                            </Expander>
+                        </StackPanel>
+                    </ScrollViewer>
+                    <Button x:Name="EquivalentsButton" Grid.Row="4" Height="38" Content="Equivalents"
+                            Background="#E0F2F0" Foreground="#294C62" BorderBrush="#9DD9D2" BorderThickness="1"
+                            FontWeight="SemiBold" IsEnabled="False" Click="OnOpenEquivalentsClicked"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="3" Margin="0,14,0,0" Padding="14,12" Background="White"
+                BorderBrush="#D5E0E3" BorderThickness="1" CornerRadius="0">
+            <Grid>
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Cash" Style="{StaticResource PaymentCardTitle}"/>
+                        <Grid>
+                            <ToggleButton x:Name="CashPaymentCheckBox" Tag="Cash" Style="{StaticResource PaymentCardToggle}"
+                                          Checked="OnPaymentSelectionChanged" Unchecked="OnPaymentSelectionChanged"/>
+                            <sales:MoneyEntryControl x:Name="CashPaymentBox" Tag="Cash" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                     AmountChanged="OnPaymentAmountChanged" GotKeyboardFocus="OnPaymentEntryActivated"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Card" Style="{StaticResource PaymentCardTitle}"/>
+                        <Grid>
+                            <ToggleButton x:Name="CreditPaymentCheckBox" Tag="Credit" Style="{StaticResource PaymentCardToggle}"
+                                          Checked="OnPaymentSelectionChanged" Unchecked="OnPaymentSelectionChanged"/>
+                            <sales:MoneyEntryControl x:Name="CreditPaymentBox" Tag="Credit" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                     AmountChanged="OnPaymentAmountChanged" GotKeyboardFocus="OnPaymentEntryActivated"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Bank Transfer" Style="{StaticResource PaymentCardTitle}"/>
+                        <Grid>
+                            <ToggleButton x:Name="TransferPaymentCheckBox" Tag="BankTransfer" Style="{StaticResource PaymentCardToggle}"
+                                          Checked="OnPaymentSelectionChanged" Unchecked="OnPaymentSelectionChanged"/>
+                            <sales:MoneyEntryControl x:Name="TransferPaymentBox" Tag="BankTransfer" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                     AmountChanged="OnPaymentAmountChanged" GotKeyboardFocus="OnPaymentEntryActivated"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="On Account" Style="{StaticResource PaymentCardTitle}"/>
+                        <Grid>
+                            <ToggleButton x:Name="DebtPaymentCheckBox" Tag="Debt" Style="{StaticResource PaymentCardToggle}"
+                                          IsEnabled="False" ToolTip="Select a patient for an on-account sale."
+                                          Checked="OnPaymentSelectionChanged" Unchecked="OnPaymentSelectionChanged"/>
+                            <sales:MoneyEntryControl x:Name="DebtPaymentBox" Tag="Debt" IsEnabled="False"
+                                                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                     AmountChanged="OnPaymentAmountChanged" GotKeyboardFocus="OnPaymentEntryActivated"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="Discount" Style="{StaticResource PaymentCardTitle}"/>
+                        <Grid>
+                            <ToggleButton x:Name="DiscountPaymentCheckBox" Tag="Discount" Style="{StaticResource PaymentCardToggle}"
+                                          MinWidth="225" Checked="OnPaymentSelectionChanged" Unchecked="OnPaymentSelectionChanged"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <sales:MoneyEntryControl x:Name="DiscountPaymentBox" Tag="Discount"
+                                                         AmountChanged="OnPaymentAmountChanged" GotKeyboardFocus="OnPaymentEntryActivated"/>
+                                <TextBlock Text="%" Margin="10,0,3,0" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#4F626D"/>
+                                <TextBox x:Name="DiscountPercentBox" Tag="Discount" Width="42" Height="30" Padding="4,3" Text="0"
+                                         TextAlignment="Center" VerticalContentAlignment="Center"
+                                         ToolTip="Discount as a percentage of the total"
+                                         PreviewTextInput="OnDiscountPercentPreviewTextInput"
+                                         TextChanged="OnDiscountPercentTextChanged"
+                                         LostFocus="OnDiscountPercentLostFocus"
+                                         GotKeyboardFocus="OnPaymentEntryActivated"/>
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel x:Name="DiscountDistributionPanel" Visibility="Hidden" Margin="0,5,0,0">
+                            <CheckBox x:Name="DistributeDiscountCheckBox" Content="Allocate discount" IsChecked="True"
+                                      FontSize="11" Checked="OnDiscountDistributionChanged" Unchecked="OnDiscountDistributionChanged"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock x:Name="PaymentStatusText" Grid.Row="1" Margin="0,9,0,0" HorizontalAlignment="Right"
+                           Foreground="#B33A32" FontWeight="SemiBold" Text="Payment Total: TRY 0.00"/>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="4" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="18"/>
+                <ColumnDefinition Width="260"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel LastChildFill="True">
+                <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,16,0">
+                    <TextBlock Text="Note" FontSize="11" Foreground="#65717E" Margin="2,0,0,4"/>
+                    <TextBox x:Name="SaleNotesBox" Width="330" Height="36" Padding="9,6" MaxLength="300"
+                             VerticalContentAlignment="Center" BorderBrush="#CBD7DB" BorderThickness="1" Background="White"/>
+                    <CheckBox x:Name="SendItsNotificationCheckBox" Margin="2,7,0,0" IsChecked="True"
+                              Content="Send ITS Notification" Foreground="#33464F"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock x:Name="DebtTotalText" Text="Debt to Add: TRY 0.00" Margin="0,0,14,0"
+                               VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#465760"/>
+                    <TextBlock x:Name="DiscountTotalText" Text="Discount: TRY 0.00" Margin="0,0,14,0"
+                               VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#7A5B18"/>
+                    <TextBlock x:Name="PaymentTotalText" Text="Payment Total: TRY 0.00" Margin="0,0,14,0"
+                               VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#294C62"/>
+                    <TextBlock x:Name="TotalText" VerticalAlignment="Center"
+                               Text="Total: TRY 0.00" FontSize="24" FontWeight="SemiBold" Foreground="#21323C"/>
+                </StackPanel>
+            </DockPanel>
+            <Button x:Name="CompleteSaleButton" Grid.Column="2" Height="48" Content="Complete Sale"
+                    Background="#168B52" Foreground="White" BorderThickness="0" FontSize="16" FontWeight="SemiBold"
+                    IsEnabled="False" Click="OnCompleteSaleClicked">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource SquareButtonStyle}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="SaleButtonBorder" Background="{TemplateBinding Background}" CornerRadius="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="SaleButtonBorder" Property="Background" Value="#117743"/></Trigger>
+                                        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="SaleButtonBorder" Property="Background" Value="#A8C9B8"/><Setter Property="Opacity" Value="0.75"/></Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

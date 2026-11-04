@@ -1,0 +1,536 @@
+{
+  "barcode": {
+    "active_ingredient": 0.0347,
+    "all_equivalents": 0.2417,
+    "atc_code": 0.065,
+    "barcode": 0.0,
+    "brand_name": 1.0,
+    "company_name": 0.038,
+    "dosage_instructions": 0.177,
+    "equivalent_classification": 0.063,
+    "equivalent_group_code": 0.23,
+    "free_text": 0.015,
+    "generic_code": 1.0,
+    "generic_name": 1.0,
+    "indication_summary": 0.2657,
+    "indications": 1.0,
+    "is_ek4f": 1.0,
+    "kamu_no": 0.0607,
+    "license_date": 1.0,
+    "license_number": 1.0,
+    "market_status": 0.9587,
+    "medicine_name": 0.0,
+    "medula_details": 1.0,
+    "medula_info": 1.0,
+    "nfc_code": 1.0,
+    "old_name": 1.0,
+    "origin": 0.063,
+    "package_description": 0.028,
+    "pharmaceutical_form": 0.0597,
+    "photo": 1.0,
+    "pregnancy_category": 1.0,
+    "prescription_type_id": 0.0,
+    "prescription_type_name": 0.0,
+    "product_form_code": 1.0,
+    "product_prefix": 1.0,
+    "product_type_id": 1.0,
+    "product_type_name": 0.0597,
+    "reference_price_group": 0.8983,
+    "reimbursement_status_code": 0.002,
+    "reimbursement_status_description": 0.002,
+    "sgk_code": 0.1373,
+    "shelf_life": 1.0,
+    "source_company_id": 0.038,
+    "source_product_id": 0.0,
+    "strength": 1.0,
+    "sut_rules": 1.0,
+    "sut_summary": 1.0,
+    "sut_summary_code": 1.0,
+    "twenty_year_status": 0.063,
+    "warnings": 0.935
+  },
+  "barcodeActive": {
+    "nearest_expiry_date": 0.8277,
+    "status": 1.0
+  },
+  "barcodeAnalysis": {
+    "record_reference_no": 1.0
+  },
+  "barcodeCampaign": {
+    "end_date": 0.0,
+    "period_days": 0.0,
+    "start_date": 0.0
+  },
+  "barcodePriceHistory": {
+    "discount_rate": 0.0,
+    "manufacturer_price": 0.0,
+    "price_difference": 0.0,
+    "public_paid_price": 0.0,
+    "public_price": 0.0,
+    "sale_price": 0.0,
+    "vat_rate": 0.0,
+    "warehouse_price": 0.0
+  },
+  "barcodePrices": {
+    "currency": 0.0,
+    "discount_rate": 0.0,
+    "manufacturer_price": 0.021,
+    "price_difference": 0.0113,
+    "price_effective_date": 0.0247,
+    "price_type": 0.0,
+    "public_paid_price": 0.012,
+    "public_price": 0.0,
+    "purchase_price": 0.021,
+    "sale_price": 0.0,
+    "vat_rate": 0.0,
+    "warehouse_price": 0.021
+  },
+  "branches": {
+    "parent_branch_id": 0.4275
+  },
+  "consignmentSaleItems": {
+    "entry_cost": 1.0
+  },
+  "consignmentSalePayements": {
+    "settled_at": 0.0
+  },
+  "consignmentSales": {
+    "notes": 1.0,
+    "settled_at": 0.0023,
+    "settled_by": 0.0023,
+    "settlement_sale_id": 0.9897,
+    "user_no": 0.0
+  },
+  "depot": {
+    "address": 0.2215,
+    "business_phone_numbers": 0.2257,
+    "city": 0.2257,
+    "contact_person": 0.8523,
+    "debt_balance": 1.0,
+    "depot_name": 0.0,
+    "district": 0.2257,
+    "e_invoice_password": 0.9747,
+    "e_invoice_region_name": 0.9979,
+    "e_invoice_username": 0.9747,
+    "email_addresses": 0.2679,
+    "fax_numbers": 1.0,
+    "gln_code": 0.3249,
+    "is_active": 0.2426,
+    "medicines_in_transit": 1.0,
+    "postal_code": 1.0,
+    "tax_no": 0.8143,
+    "tax_office": 0.8122,
+    "uts_company_numbers": 0.9873,
+    "web_password": 1.0,
+    "web_username": 1.0,
+    "website": 1.0
+  },
+  "depot_log": {
+    "new_data": 0.0,
+    "old_data": 1.0
+  },
+  "doctor": {
+    "branch_id": 0.3947,
+    "certificate": 1.0,
+    "diploma_no": 0.0003,
+    "diploma_registration_no": 0.0433,
+    "email_addresses": 1.0,
+    "facility_no": 1.0,
+    "first_name": 0.0,
+    "last_name": 0.0003,
+    "phone_numbers": 1.0,
+    "tc_identity_no": 1.0
+  },
+  "doctor_log": {
+    "new_data": 0.0,
+    "old_data": 0.993
+  },
+  "documents": {
+    "kit": 0.0,
+    "kub": 0.0
+  },
+  "faculty": {
+    "address": 1.0,
+    "city": 0.0023,
+    "country": 1.0,
+    "district": 1.0,
+    "email_addresses": 1.0,
+    "faculty_code": 0.0,
+    "faculty_name": 0.0,
+    "faculty_type_id": 0.0003,
+    "ownership_type": 0.0,
+    "phone_numbers": 1.0,
+    "tax_no": 1.0,
+    "tax_office": 1.0
+  },
+  "faculty_log": {
+    "new_data": 0.0,
+    "old_data": 1.0
+  },
+  "family_group": {
+    "main_patient_id": 0.0
+  },
+  "family_group_log": {
+    "new_data": 0.0,
+    "old_data": 0.2123
+  },
+  "invoice_incremental_sync_items": {
+    "issue_date": 0.0,
+    "received_at": 0.0
+  },
+  "invoice_incremental_sync_state": {
+    "active_run_cutoff": 0.0,
+    "active_run_id": 0.0,
+    "last_successful_cutoff": 0.0
+  },
+  "invoice_lines": {
+    "discount_amount": 1.0,
+    "line_amount": 1.0,
+    "quantity": 0.0,
+    "unit_price": 1.0,
+    "vat_amount": 1.0,
+    "vat_rate": 1.0
+  },
+  "invoice_stock_logs": {
+    "related_log_id": 0.9993
+  },
+  "invoices": {
+    "discount_amount": 0.026,
+    "due_date": 1.0,
+    "issue_date": 0.0,
+    "kdv_amount": 1.0,
+    "payable_amount": 0.0,
+    "total_cost": 1.0
+  },
+  "kurum": {
+    "address": 0.95,
+    "city": 0.95,
+    "contact_person": 0.95,
+    "district": 0.95,
+    "email_addresses": 1.0,
+    "gln_code": 0.15,
+    "kurum_code": 0.0,
+    "kurum_name": 0.0,
+    "phone_numbers": 1.0,
+    "tax_no": 0.95,
+    "tax_office": 0.95,
+    "website": 1.0
+  },
+  "kurum_log": {
+    "new_data": 0.0,
+    "old_data": 1.0
+  },
+  "loyal_patient_medication_history": {
+    "available_date": 0.0,
+    "medication_purchase_date": 0.0,
+    "medication_usage": 0.0,
+    "prescription_no": 0.0,
+    "quantity": 0.0,
+    "report_diagnosis_no": 0.3571
+  },
+  "loyal_patient_profile": {
+    "last_sync_error": 0.9966,
+    "medication_history_synced_at": 0.9983,
+    "report_history_synced_at": 0.9983
+  },
+  "loyal_patient_report_history": {
+    "diagnosis": 0.0,
+    "end_date": 0.0,
+    "report_no": 0.0,
+    "report_tracking_no": 0.0,
+    "start_date": 0.0
+  },
+  "loyal_patient_report_sample_run": {
+    "completed_at": 0.75,
+    "error": 1.0,
+    "estimated_loyal_patient_count": 0.75,
+    "mechanism1_estimated_count": 1.0,
+    "mechanism1_loyal_ratio": 1.0,
+    "mechanism2_estimated_count": 1.0,
+    "mechanism2_loyal_ratio": 1.0,
+    "mechanism3_estimated_count": 1.0,
+    "mechanism3_loyal_ratio": 1.0,
+    "sample_loyal_ratio": 0.75
+  },
+  "loyal_patient_report_supply_evidence": {
+    "decision_reason": 0.2929,
+    "error": 0.9548,
+    "explicitly_unloyal_family_member_count": 0.2929,
+    "family_score": 0.2929,
+    "frequency_score": 0.2929,
+    "has_report_evidence": 0.2929,
+    "hybrid_score": 0.2929,
+    "is_loyal": 0.0452,
+    "is_report_decisive": 0.2929,
+    "loyal_family_member_count": 0.2929,
+    "mechanism1_is_loyal": 1.0,
+    "mechanism2_is_loyal": 1.0,
+    "mechanism3_is_loyal": 0.2929,
+    "report_score": 0.2929,
+    "supplied_report_count": 0.0452,
+    "supply_ratio": 0.0452,
+    "total_report_count": 0.0452
+  },
+  "manual_movements": {
+    "its_notification_id": 1.0,
+    "note": 1.0
+  },
+  "patient": {
+    "address": 0.9923,
+    "alive": 0.0,
+    "allow_debt": 0.0,
+    "consigned_qr_codes": 0.9963,
+    "coverage_type": 1.0,
+    "date_of_birth": 0.688,
+    "debt_amount": 0.0,
+    "debt_credit_score": 0.982,
+    "email_addresses": 1.0,
+    "family_doctor_id": 0.9997,
+    "family_group_id": 0.993,
+    "first_name": 0.0177,
+    "gender": 0.7413,
+    "insurance_type": 1.0,
+    "kurum_id": 0.3503,
+    "last_name": 0.0183,
+    "loyalty_mechanism3_evaluated_at": 0.9783,
+    "loyalty_mechanism3_score": 0.9783,
+    "loyalty_unloyal_since": 0.979,
+    "maximum_debt": 0.9813,
+    "note": 1.0,
+    "patient_type": 0.432,
+    "phone_numbers": 0.5753,
+    "photo": 1.0,
+    "relationship_group_code": 0.9977,
+    "sicil_no": 1.0,
+    "tc_identity_no": 0.0
+  },
+  "patient_log": {
+    "new_data": 0.0,
+    "old_data": 0.193
+  },
+  "pharmacy": {
+    "address": 0.8595,
+    "city": 0.9838,
+    "district": 0.9784,
+    "email_addresses": 1.0,
+    "gln_code": 0.0,
+    "medicines_in_transit": 1.0,
+    "pharmacist_name": 0.9405,
+    "pharmacy_name": 0.0,
+    "phone_numbers": 0.8649,
+    "postal_code": 1.0,
+    "tax_no": 1.0,
+    "tax_office": 1.0,
+    "uts_company_numbers": 0.973
+  },
+  "pharmacy_log": {
+    "new_data": 0.0,
+    "old_data": 1.0
+  },
+  "prescription": {
+    "doctor_branch_id": 0.0463,
+    "doctor_certificate": 0.985,
+    "doctor_diploma_registration_no": 0.0457,
+    "e_prescription_no": 0.0023,
+    "equivalent_price_difference": 0.0457,
+    "examination_copayment_cash": 0.0477,
+    "examination_copayment_salary": 0.0477,
+    "facility_code": 0.0467,
+    "final_content": 0.0457,
+    "has_qr_codes": 0.0,
+    "icd10_diagnoses": 0.047,
+    "identity_fingerprint": 0.0,
+    "institution_total_payment": 0.0457,
+    "invoice_type_code": 0.102,
+    "is_sequential_distribution": 0.0,
+    "list_barcode_status": 1.0,
+    "list_document_status": 1.0,
+    "list_medical_report": 1.0,
+    "list_status_code": 0.0,
+    "medication_copayment": 0.0457,
+    "medication_purchase_date": 0.0457,
+    "medula_filter_date": 0.0,
+    "medula_page_number": 0.9577,
+    "medula_prescription_no": 0.0477,
+    "medula_row_index": 0.9577,
+    "patient_coverage_type": 0.048,
+    "patient_insurance_type": 0.0467,
+    "patient_tc_identity_no": 0.0,
+    "patient_total_payment": 0.0457,
+    "patient_type": 0.0457,
+    "prescription_copayment_cash": 0.0477,
+    "prescription_copayment_salary": 0.0477,
+    "prescription_date": 0.0,
+    "prescription_note": 1.0,
+    "prescription_subtype_code": 0.0477,
+    "prescription_total": 0.0457,
+    "prescription_type_code": 0.0457,
+    "protocol_no": 0.046,
+    "provision_type_code": 0.9847,
+    "qr_codes": 0.0773,
+    "qr_status_code": 0.0,
+    "recipient_relationship": 0.233,
+    "recipient_tc_identity_no": 0.0477,
+    "registered_content": 0.0457,
+    "saved_by_user_id": 0.0,
+    "state_fingerprint": 0.0
+  },
+  "prescription_log": {
+    "user_id": 0.0
+  },
+  "prescription_sale_operations": {
+    "error_text": 0.0,
+    "local_completed_at": 0.0,
+    "remote_confirmed_at": 0.0,
+    "remote_message": 0.0,
+    "requested_by": 0.0
+  },
+  "qrActive": {
+    "expiry_date": 0.0,
+    "purchase_cost": 0.0,
+    "reference_no": 0.0,
+    "reserved_at": 1.0,
+    "reserved_prescription_uid": 1.0,
+    "status": 0.0
+  },
+  "qrHanged": {
+    "entry_cost": 0.0,
+    "expiry_date": 0.0
+  },
+  "qrInactive": {
+    "entry_cost": 0.0,
+    "exit_price": 0.0,
+    "expiry_date": 0.0,
+    "reference_no": 0.0
+  },
+  "qrMovements": {
+    "movement_address": 0.0,
+    "reference_code": 0.0,
+    "user_id": 0.0
+  },
+  "retail_its_operations": {
+    "error_text": 0.0,
+    "fault_code": 0.0,
+    "fault_message": 0.0,
+    "http_status": 0.0,
+    "local_completed_at": 0.0,
+    "notification_id": 0.0,
+    "refund_id": 0.0,
+    "remote_confirmed_at": 0.0,
+    "response_body": 0.0,
+    "sale_id": 0.0
+  },
+  "sales": {
+    "cancelled_at": 1.0,
+    "invoice_no": 1.0,
+    "its_no": 1.0,
+    "medula_sale_confirmed_at": 0.912,
+    "notes": 1.0,
+    "patient_id": 0.8883,
+    "prescription_finalized_at": 0.9193,
+    "prescription_no": 0.9153,
+    "prescription_uid": 0.912,
+    "user_no": 0.0
+  },
+  "salesPayements": {
+    "cancelled_at": 1.0,
+    "invoice_no": 1.0,
+    "payment_role": 1.0,
+    "settled_at": 1.0
+  },
+  "salesQrItems": {
+    "entry_cost": 1.0
+  },
+  "salesRefundItems": {
+    "entry_cost": 1.0,
+    "original_sale_id": 0.364
+  },
+  "salesRefundPayements": {
+    "payment_role": 1.0,
+    "settled_at": 1.0
+  },
+  "salesRefunds": {
+    "notes": 1.0,
+    "original_sale_id": 0.7007,
+    "patient_id": 0.7007,
+    "prescription_uid": 0.7007,
+    "user_no": 0.0
+  },
+  "stock_its_operation_items": {
+    "error_text": 0.0,
+    "result_code": 0.0
+  },
+  "stock_its_operations": {
+    "error_text": 0.0,
+    "fault_code": 0.0,
+    "fault_message": 0.0,
+    "http_status": 0.0,
+    "local_completed_at": 0.0,
+    "manual_movement_id": 0.0,
+    "notification_id": 0.0,
+    "remote_confirmed_at": 0.0,
+    "response_body": 0.0,
+    "source_reference": 0.0
+  },
+  "takas": {
+    "accept_notification_id": 1.0,
+    "accepted_at": 0.4873,
+    "cancel_notification_id": 1.0,
+    "cancelled_at": 1.0,
+    "debt_applied_at": 0.0,
+    "debt_reversed_at": 1.0,
+    "destination_gln": 0.0,
+    "last_status_checked_at": 1.0,
+    "last_status_error": 1.0,
+    "next_status_check_at": 1.0,
+    "notes": 1.0,
+    "source_gln": 0.0007,
+    "transfer_notification_id": 1.0,
+    "transferred_at": 0.5127,
+    "user_no": 0.0
+  },
+  "takasBarcodeItems": {
+    "entry_cost": 0.192
+  },
+  "takasQrItems": {
+    "accept_result_code": 1.0,
+    "cancel_result_code": 1.0,
+    "entry_cost": 0.4083,
+    "last_checked_at": 1.0,
+    "last_error": 1.0,
+    "last_status_gln1": 1.0,
+    "last_status_gln2": 1.0,
+    "last_status_result_code": 1.0,
+    "transfer_result_code": 1.0
+  },
+  "unnotified_its_movements": {
+    "corrected_at": 0.0,
+    "corrected_by": 0.0,
+    "correction_notification_id": 0.0,
+    "paired_record_id": 0.0
+  },
+  "users": {
+    "age": 1.0,
+    "date_of_birth": 1.0,
+    "entry_date": 1.0,
+    "exit_date": 1.0,
+    "first_name": 0.0,
+    "gender": 1.0,
+    "last_name": 0.5,
+    "password": 1.0,
+    "permisson_level": 1.0,
+    "phone_number": 1.0,
+    "photo": 1.0,
+    "session_active": 0.0,
+    "status": 0.0,
+    "tc_identity_no": 0.5,
+    "user_points": 1.0
+  },
+  "users_log": {
+    "new_data": 0.0,
+    "old_data": 0.007
+  },
+  "warningIcons": {
+    "sample_barcode": 0.0
+  }
+}
