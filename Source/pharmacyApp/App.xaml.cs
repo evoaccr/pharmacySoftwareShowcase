@@ -91,9 +91,11 @@ public partial class App : Application
 
             StartupErrors.Kind = StartupFailureKind.Project;
             var mainWindow = new MainWindow();
+            FrontendTelemetry.Initialize();
             MainWindow = mainWindow;
             ShutdownMode = ShutdownMode.OnMainWindowClose;
             mainWindow.Show();
+            StartupErrors.CompleteStartup();
             activityTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };
             activityTimer.Tick += async (_, _) =>
             {

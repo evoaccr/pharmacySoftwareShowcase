@@ -289,7 +289,9 @@ public partial class DatabaseSettingsView : UserControl
                 port,
                 DatabaseNameBox.Text.Trim(),
                 UsernameBox.Text.Trim(),
-                PasswordEntry.Password));
+                PasswordEntry.Password,
+                DatabaseConnectionSettingsStore.Current.SslMode,
+                DatabaseConnectionSettingsStore.Current.AllowSchemaChanges));
 
             var ignoredUserId = (IgnoredUserBox.SelectedItem as IgnoreUserOption)?.UserId;
             ApplicationSettingsStore.Save(new ApplicationSettings

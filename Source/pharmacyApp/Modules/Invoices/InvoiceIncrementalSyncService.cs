@@ -47,6 +47,7 @@ public sealed class InvoiceIncrementalSyncService
 
     public async Task EnsureSchemaAsync(CancellationToken cancellationToken = default)
     {
+        if (!DatabaseConnectionSettingsStore.Current.AllowSchemaChanges) return;
         await using var connection = DatabaseConnectionSettingsStore.CreateConnection();
         await connection.OpenAsync(cancellationToken);
         await using var command = pharmacyApp.Infrastructure.DatabaseCommand.Create(SchemaSql, connection);

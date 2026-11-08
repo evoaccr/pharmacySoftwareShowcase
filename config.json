@@ -143,25 +143,24 @@
     "AllianceUsername": "",
     "AlliancePassword": ""
   },
-  // Future public connection for reviewers:
-  // Replace Hostname with your public DNS name or public IP after port forwarding is ready.
-  // Use only the hostname/IP: no https://, port suffix or path. LAN and Tailscale addresses require private-network access.
-  // Port is the external TCP port forwarded to this server's PostgreSQL port 1234.
-  // Keep the database name and login values below. Restart the app after editing.
-  // The current localhost value keeps this copy usable on the database server until the public endpoint is ready.
+  // Public demo database. Restart the app after changing these settings.
+  // Use a hostname without https://, a port suffix or a path.
+  // VerifyFull checks encryption, the certificate authority and the server hostname.
   "Database": {
-    "Hostname": "localhost",
+    "Hostname": "portfolio-db.acarise.net",
     "Port": 1234,
     "DatabaseName": "Portfolio",
     "Username": "portfolio",
-    "Password": "portfolio123"
+    "Password": "portfolio123",
+    "SslMode": "VerifyFull",
+    "AllowSchemaChanges": false
   },
   "Ai": {
     "Enabled": true,
     "RouterModel": "gpt-6-luna",
-    "SimpleModel": "gpt-5.6-luna",
-    "DefaultModel": "gpt-5.6-terra",
-    "ComplexModel": "gpt-5.6-sol",
+    "SimpleModel": "gpt-6-luna",
+    "DefaultModel": "gpt-6-luna",
+    "ComplexModel": "gpt-6-luna",
     "RouterReasoningEffort": "none",
     "SimpleReasoningEffort": "low",
     "DefaultReasoningEffort": "low",
@@ -184,13 +183,12 @@
     "EnableToolSearch": true,
     "EnableProgrammaticToolCalling": false,
     "StoreResponses": false,
-    "GatewayEndpoint": null,
+    "GatewayEndpoint": "https://portfolio-ai.acarise.net/v1/responses",
     "ConfirmationLifetimeMinutes": 5,
   
     "ConfigurationVersion": 1
   },
   "Secrets": {
-    "OpenAiApiKey": "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",
-    "GatewayToken": ""
+    "GatewayToken": "0bd6795dcc50f76ff09b7a66c60c22daa450b53e333320e0a56e1e92b74f5015"
   }
 }

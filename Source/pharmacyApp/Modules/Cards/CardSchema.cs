@@ -16,6 +16,7 @@ internal static class CardSchema
 
     public static async Task EnsureAsync(NpgsqlConnection connection, CancellationToken cancellationToken)
     {
+        if (!DatabaseConnectionSettingsStore.Current.AllowSchemaChanges) return;
         if (isReady) return;
         await Gate.WaitAsync(cancellationToken);
         try

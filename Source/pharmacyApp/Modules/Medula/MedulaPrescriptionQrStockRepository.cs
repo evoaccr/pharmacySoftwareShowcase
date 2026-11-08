@@ -32,6 +32,7 @@ public sealed class MedulaPrescriptionQrStockRepository
         if (codes.Length == 0) return new MedulaQrStockValidation([], []);
         await using var connection = DatabaseConnectionSettingsStore.CreateConnection();
         await connection.OpenAsync(cancellationToken);
+        if (DatabaseConnectionSettingsStore.Current.AllowSchemaChanges)
         await using (var schema = pharmacyApp.Infrastructure.DatabaseCommand.Create(EnsureSchemaSql, connection))
             await schema.ExecuteNonQueryAsync(cancellationToken);
         await using var command = pharmacyApp.Infrastructure.DatabaseCommand.Create("""
@@ -60,6 +61,7 @@ public sealed class MedulaPrescriptionQrStockRepository
         await using var connection = DatabaseConnectionSettingsStore.CreateConnection();
         await connection.OpenAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        if (DatabaseConnectionSettingsStore.Current.AllowSchemaChanges)
         await using (var schema = pharmacyApp.Infrastructure.DatabaseCommand.Create(EnsureSchemaSql, connection, transaction))
             await schema.ExecuteNonQueryAsync(cancellationToken);
         await using (var release = pharmacyApp.Infrastructure.DatabaseCommand.Create("""

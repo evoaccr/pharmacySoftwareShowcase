@@ -234,7 +234,7 @@ internal static class Program
         File.WriteAllText(path, original);
         var store = new ConfigurationStore(path);
         Assert(store.ReadSection<ApplicationSettings>("Application").PharmacistName == "", "Commented settings are ignored and use defaults");
-        Assert(store.ReadDatabase().Port == 5432, "Commented database settings use constructor defaults");
+        Assert(store.ReadDatabase().Port == new DatabaseConnectionSettings().Port, "Commented database settings use constructor defaults");
         Assert(store.ReadDatabase().Password == "literal // password", "Comment prefixes inside strings are literal data");
         store.WriteSection("Application", new { PharmacyName = "Updated İstanbul" });
         store.WriteSection("Ai", new { Enabled = false, MaxToolTurns = 8 });
@@ -273,6 +273,14 @@ internal static class Program
         Assert(handler.Authorization == "Bearer unit-gateway-key", "Gateway authentication uses configuration secrets");
         Assert(ApplicationSettingsStore.SettingsFilePath == DatabaseConnectionSettingsStore.SettingsFilePath &&
                ApplicationSettingsStore.SettingsFilePath == AiConfigurationProvider.ConfigurationPath, "Application, database and AI share exactly one settings file");
+        var verifiedSettings = new DatabaseConnectionSettings("portfolio-db.acarise.net", 1234, "Portfolio", "portfolio", "test-only");
+        var build = typeof(DatabaseConnectionSettingsStore).GetMethod("BuildConnectionString", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!;
+        var connectionOptions = new Npgsql.NpgsqlConnectionStringBuilder((string)build.Invoke(null, [verifiedSettings])!);
+        Assert(connectionOptions.SslMode == Npgsql.SslMode.VerifyFull, "Public database connections require certificate and hostname verification");
+        Assert(!verifiedSettings.AllowSchemaChanges, "Reviewer clients do not run database migrations");
+        Assert(!StartupErrors.RuntimeErrorMessage(new InvalidOperationException()).Contains("re-pull"), "Runtime errors do not report an incomplete installation");
+        Assert(StartupErrors.RuntimeErrorMessage(new Exception("outer", new Npgsql.PostgresException("test", "ERROR", "ERROR", "XX001"))).Contains("damaged data"),
+            "Nested PostgreSQL corruption errors identify damaged server data");
         Console.WriteLine("PASS portable configuration, comments, isolation and AI authentication");
         return 0;
     }

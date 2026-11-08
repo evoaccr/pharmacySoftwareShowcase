@@ -3,11 +3,13 @@ using Npgsql;
 namespace pharmacyApp.Infrastructure;
 
 public sealed record DatabaseConnectionSettings(
-    string Hostname = "localhost",
-    int Port = 5432,
-    string DatabaseName = "PH",
-    string Username = "postgres",
-    string Password = "");
+    string Hostname = "portfolio-db.acarise.net",
+    int Port = 1234,
+    string DatabaseName = "Portfolio",
+    string Username = "portfolio",
+    string Password = "portfolio123",
+    string SslMode = "VerifyFull",
+    bool AllowSchemaChanges = false);
 
 public static class DatabaseConnectionSettingsStore
 {
@@ -54,6 +56,7 @@ public static class DatabaseConnectionSettingsStore
             Port = settings.Port,
             Database = settings.DatabaseName,
             Username = settings.Username,
+            SslMode = Enum.Parse<Npgsql.SslMode>(settings.SslMode, ignoreCase: true),
             Timeout = 5,
             CommandTimeout = 20,
             KeepAlive = 15,
@@ -70,6 +73,8 @@ public static class DatabaseConnectionSettingsStore
         if (settings.Port is < 1 or > 65535) throw new ArgumentOutOfRangeException(nameof(settings), "Port must be between 1 and 65535.");
         if (string.IsNullOrWhiteSpace(settings.DatabaseName)) throw new ArgumentException("Database name is required.", nameof(settings));
         if (string.IsNullOrWhiteSpace(settings.Username)) throw new ArgumentException("Username is required.", nameof(settings));
+        if (!Enum.TryParse<Npgsql.SslMode>(settings.SslMode, ignoreCase: true, out var mode) || !Enum.IsDefined(mode))
+            throw new ArgumentException("SSL mode is invalid.", nameof(settings));
     }
 
 }

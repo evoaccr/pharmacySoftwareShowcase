@@ -95,6 +95,7 @@ public sealed class InvoiceArchiveRepository
 
     public async Task EnsureSchemaAsync(CancellationToken cancellationToken = default)
     {
+        if (!DatabaseConnectionSettingsStore.Current.AllowSchemaChanges) return;
         await using var connection = DatabaseConnectionSettingsStore.CreateConnection();
         await connection.OpenAsync(cancellationToken);
         await using var command = pharmacyApp.Infrastructure.DatabaseCommand.Create(EnsureSchemaSql, connection);
@@ -111,6 +112,7 @@ public sealed class InvoiceArchiveRepository
         await using var connection = DatabaseConnectionSettingsStore.CreateConnection();
         await connection.OpenAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        if (DatabaseConnectionSettingsStore.Current.AllowSchemaChanges)
         await using (var schema = pharmacyApp.Infrastructure.DatabaseCommand.Create(EnsureSchemaSql, connection, transaction))
             await schema.ExecuteNonQueryAsync(cancellationToken);
 

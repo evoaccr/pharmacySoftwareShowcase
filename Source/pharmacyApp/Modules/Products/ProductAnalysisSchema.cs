@@ -12,6 +12,7 @@ internal static class ProductAnalysisSchema
 
     public static async Task EnsureAsync(NpgsqlConnection connection, CancellationToken cancellationToken = default)
     {
+        if (!pharmacyApp.Infrastructure.DatabaseConnectionSettingsStore.Current.AllowSchemaChanges) return;
         var settings = new NpgsqlConnectionStringBuilder(connection.ConnectionString);
         var key = $"{settings.Host}:{settings.Port}/{settings.Database}/{settings.Username}";
         await EnsureLock.WaitAsync(cancellationToken);

@@ -9,6 +9,8 @@ public static class StartupErrors
     public static string? Dependency { get; set; }
     public static bool DatabaseVerified { get; set; }
     public static bool Failed { get; private set; }
+    public static bool StartupCompleted { get; private set; }
+    public static void CompleteStartup() => StartupCompleted = true;
     private static string? eventName;
     private static int reporting;
 
@@ -38,6 +40,12 @@ public static class StartupErrors
         if (Interlocked.Exchange(ref reporting, 1) != 0) return;
         try
         {
+            if (StartupCompleted)
+            {
+                System.Windows.MessageBox.Show(RuntimeErrorMessage(exception), "Pharmacy - Error",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
+            }
             var kind = Kind;
             var dependency = Dependency;
             for (Exception? error = exception; error is not null; error = error.InnerException)
@@ -57,5 +65,17 @@ public static class StartupErrors
             StartupFailureDialog.Show(kind, rows, NotifyVisible);
         }
         finally { Interlocked.Exchange(ref reporting, 0); }
+    }
+
+    public static string RuntimeErrorMessage(Exception exception)
+    {
+        for (Exception? error = exception; error is not null; error = error.InnerException)
+        {
+            if (error is Npgsql.PostgresException { SqlState: "XX001" or "XX002" })
+                return "The medication database contains damaged data. Contact the server administrator.";
+            if (error is Npgsql.NpgsqlException)
+                return "The database operation failed. Check the connection or contact the server administrator.";
+        }
+        return "Could not complete the operation. Close and reopen the app.";
     }
 }

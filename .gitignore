@@ -1,0 +1,32 @@
+# Local browser profiles, downloads, sessions and AI diagnostics
+/Data/*
+# Keep the medicine documents used by the app
+!/Data/ProductDocuments/
+
+# Generated build and editor files
+**/bin/
+**/obj/
+.vs/
+.idea/
+*.user
+*.suo
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Temporary files, diagnostic logs, private keys and local settings backups
+*.tmp
+*.log
+*.dmp
+*.bak
+*.before-*
+*.key
+*.pfx
+*.p12
+.env
+.env.*
+config.json.tmp
+
+# Local-only files excluded from the reviewer repository
+/README.md
+/Source/tools/ServerMaintenance/

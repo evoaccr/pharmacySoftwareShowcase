@@ -10,9 +10,9 @@ public sealed record AiConfiguration
     public int ConfigurationVersion { get; init; } = CurrentConfigurationVersion;
     public bool Enabled { get; init; } = true;
     public string RouterModel { get; init; } = AiRouterModelCatalog.DefaultModelId;
-    public string SimpleModel { get; init; } = "gpt-5.6-luna";
-    public string DefaultModel { get; init; } = "gpt-5.6-terra";
-    public string ComplexModel { get; init; } = "gpt-5.6-sol";
+    public string SimpleModel { get; init; } = "gpt-6-luna";
+    public string DefaultModel { get; init; } = "gpt-6-luna";
+    public string ComplexModel { get; init; } = "gpt-6-luna";
     public string RouterReasoningEffort { get; init; } = "none";
     public string SimpleReasoningEffort { get; init; } = "low";
     public string DefaultReasoningEffort { get; init; } = "low";

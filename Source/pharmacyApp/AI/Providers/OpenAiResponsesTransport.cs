@@ -75,7 +75,7 @@ public sealed class OpenAiResponsesTransport : IAiModelTransport
                 var body = await response.Content.ReadAsStringAsync(cancellationToken);
                 if (response.IsSuccessStatusCode) return Parse(body, toolNames.ProviderToCanonical);
                 var errorCode = MapStatus(response.StatusCode, body);
-                if (attempt < 2 && IsTransient(response.StatusCode) && errorCode != "INSUFFICIENT_QUOTA")
+                if (attempt < 2 && IsTransient(response.StatusCode) && errorCode is not ("INSUFFICIENT_QUOTA" or "GATEWAY_DAILY_LIMIT" or "GATEWAY_NOT_CONFIGURED" or "GATEWAY_KEY_REJECTED"))
                 {
                     await Task.Delay(transientDelay, cancellationToken);
                     transientDelay *= 2;
@@ -156,6 +156,7 @@ public sealed class OpenAiResponsesTransport : IAiModelTransport
             return;
         }
         var token = getSecrets().GatewayToken;
+        message.Headers.TryAddWithoutValidation("X-Frontend-Session", pharmacyApp.Infrastructure.FrontendTelemetry.SessionId);
         if (!string.IsNullOrWhiteSpace(token)) message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
@@ -222,6 +223,7 @@ public sealed class OpenAiResponsesTransport : IAiModelTransport
     private static string MapStatus(HttpStatusCode status, string body)
     {
         var providerCode = ApiErrorValue(body, "code");
+        if (providerCode is "GATEWAY_DAILY_LIMIT" or "GATEWAY_NOT_CONFIGURED" or "GATEWAY_KEY_REJECTED") return providerCode;
         var providerType = ApiErrorValue(body, "type");
         var providerMessage = ApiErrorValue(body, "message");
         if (MatchesQuota(providerCode) || MatchesQuota(providerType) ||

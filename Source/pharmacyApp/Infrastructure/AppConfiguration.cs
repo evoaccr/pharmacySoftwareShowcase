@@ -45,7 +45,7 @@ public sealed class ConfigurationStore(string filePath)
             var defaults = new
             {
                 Application = new ApplicationSettings(),
-                Database = new DatabaseConnectionSettings("localhost", 5432, "PH", "postgres", ""),
+                Database = new DatabaseConnectionSettings(),
                 Ai = new AiConfiguration(),
                 Secrets = new AiSecrets()
             };
@@ -76,7 +76,7 @@ public sealed class ConfigurationStore(string filePath)
             using var document = Parse(File.ReadAllText(FilePath));
             return document.RootElement.TryGetProperty("Database", out var value)
                 ? value.Deserialize<DatabaseConnectionSettings>(SerializerOptions) ?? throw new JsonException("Database settings cannot be null.")
-                : new DatabaseConnectionSettings("localhost", 5432, "PH", "postgres", "");
+                : throw new JsonException("The Database section is missing from config.json.");
         }
     }
 
